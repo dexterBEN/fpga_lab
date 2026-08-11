@@ -1,0 +1,36 @@
+# Vivado generated directories
+*.cache/
+*.hw/
+*.ip_user_files/
+*.runs/
+*.sim/
+*.gen/
+
+# Vivado temporary / journal / logs
+*.jou
+*.log
+*.str
+*.wdb
+*.wdf
+*.pb
+*.rpt
+*.rpx
+*.dcp
+*.vdi
+*.xml
+
+# Vivado run/status files
+*.rst
+*.begin.rst
+*.end.rst
+
+# Misc generated scripts
+ISEWrap.js
+ISEWrap.sh
+runme.bat
+runme.sh
+rundef.js
+
+# Optional editor/system files
+.vscode/
+.DS_Store
