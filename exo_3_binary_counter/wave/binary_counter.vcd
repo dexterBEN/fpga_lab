@@ -1,0 +1,161 @@
+$date
+  Sat Oct 17 03:14:43 2026
+$end
+$version
+  GHDL v0
+$end
+$timescale
+  1 fs
+$end
+$scope module standard $end
+$upscope $end
+$scope module textio $end
+$upscope $end
+$scope module std_logic_1164 $end
+$upscope $end
+$scope module env $end
+$upscope $end
+$scope module numeric_std $end
+$upscope $end
+$scope module binary_counter_tb $end
+$var reg 1 ! clk $end
+$var reg 1 " btn0 $end
+$var reg 4 # led[3:0] $end
+$scope module dut $end
+$var reg 1 $ clk $end
+$var reg 1 % btn0 $end
+$var reg 4 & led[3:0] $end
+$var reg 4 ' counter[3:0] $end
+$var reg 1 ( btn0_prev $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+#0
+0!
+0"
+b0000 #
+0$
+0%
+b0000 &
+b0000 '
+0(
+#4000000
+1!
+1$
+#8000000
+0!
+0$
+#12000000
+1!
+1$
+#16000000
+0!
+0$
+#20000000
+1!
+1"
+b0001 #
+1$
+1%
+b0001 &
+b0001 '
+1(
+#24000000
+0!
+0$
+#28000000
+1!
+1$
+#32000000
+0!
+0$
+#36000000
+1!
+0"
+1$
+0%
+0(
+#40000000
+0!
+0$
+#44000000
+1!
+1$
+#48000000
+0!
+0$
+#52000000
+1!
+1$
+#56000000
+0!
+1"
+0$
+1%
+#60000000
+1!
+b0010 #
+1$
+b0010 &
+b0010 '
+1(
+#64000000
+0!
+0$
+#68000000
+1!
+1$
+#72000000
+0!
+0"
+0$
+0%
+#76000000
+1!
+1$
+0(
+#80000000
+0!
+0$
+#84000000
+1!
+1$
+#88000000
+0!
+0$
+#92000000
+1!
+1"
+b0011 #
+1$
+1%
+b0011 &
+b0011 '
+1(
+#96000000
+0!
+0$
+#100000000
+1!
+1$
+#104000000
+0!
+0$
+#108000000
+1!
+0"
+1$
+0%
+0(
+#112000000
+0!
+0$
+#116000000
+1!
+1$
+#120000000
+0!
+0$
+#124000000
+1!
+1$
