@@ -1,0 +1,9 @@
+standard = "2008"
+
+[libraries]
+
+fpga_lab.files = [
+    "exo_*/src/**/*.vhd",
+    "exo_*/sim/**/*.vhd",
+    "exo_*/**/sources_1/**/*.vhd",
+]
