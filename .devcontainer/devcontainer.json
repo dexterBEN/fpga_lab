@@ -15,6 +15,7 @@
             ]
         }
     },
+    "forwardPorts": [8765],
     "postCreateCommand": "bash .devcontainer/scripts/setup-python.sh && ghdl --version && python3 --version && jupyter --version",
     "remoteUser": "vscode"
 }

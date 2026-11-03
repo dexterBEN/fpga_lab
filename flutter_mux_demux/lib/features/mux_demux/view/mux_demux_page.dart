@@ -14,6 +14,15 @@ class MuxDemuxPage extends StatelessWidget {
     builder: (context, state) {
       final cubit = context.read<MuxDemuxCubit>();
       final mux = state.mode == CircuitMode.mux;
+      final remote = state.dataSource == DataSource.websocket;
+      final connecting =
+          state.connectionState == DeviceConnectionState.connecting;
+      final connectionLabel = switch (state.connectionState) {
+        DeviceConnectionState.disconnected => 'Déconnecté',
+        DeviceConnectionState.connecting => 'Connexion…',
+        DeviceConnectionState.connected => 'Connecté',
+        DeviceConnectionState.error => 'Erreur de connexion',
+      };
       return Scaffold(
         body: SafeArea(
           child: SingleChildScrollView(
@@ -43,20 +52,45 @@ class MuxDemuxPage extends StatelessWidget {
                             ),
                           ],
                         ),
-                        const Chip(
+                        Chip(
                           avatar: Icon(
                             Icons.science_outlined,
                             size: 18,
                             color: mint,
                           ),
-                          label: Text('Simulation locale'),
+                          label: Text(
+                            remote ? 'Notebook WebSocket' : 'Simulation locale',
+                          ),
                         ),
-                        const Text(
-                          '●  FPGA : déconnectée',
-                          style: TextStyle(color: muted),
+                        Text(
+                          'Serveur : $connectionLabel',
+                          style: const TextStyle(color: muted),
+                        ),
+                        FilledButton.tonalIcon(
+                          onPressed: connecting
+                              ? null
+                              : () => remote
+                                    ? cubit.disconnect()
+                                    : cubit.connect(),
+                          icon: Icon(remote ? Icons.link_off : Icons.link),
+                          label: Text(
+                            remote
+                                ? 'Revenir en simulation'
+                                : 'Connecter au serveur',
+                          ),
                         ),
                       ],
                     ),
+                    if (state.lastError != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 12),
+                        child: Text(
+                          state.lastError!,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.error,
+                          ),
+                        ),
+                      ),
                     const SizedBox(height: 8),
                     const Text(
                       'Explorez le routage des signaux, un bit à la fois.',
@@ -239,8 +273,13 @@ class MuxDemuxPage extends StatelessWidget {
                                           .map((v) => v ? '1' : '0')
                                           .join('  '),
                               ),
-                              _info('Source', 'Simulation locale'),
-                              _info('FPGA', 'Déconnectée'),
+                              _info(
+                                'Source',
+                                remote
+                                    ? 'Notebook WebSocket'
+                                    : 'Simulation locale',
+                              ),
+                              _info('Serveur', connectionLabel),
                               const SizedBox(height: 12),
                               Text(
                                 mux

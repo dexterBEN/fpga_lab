@@ -1,7 +1,8 @@
 # MUX / DEMUX Visualizer
 
 Application Flutter de simulation des exercices 5 et 6 sur PYNQ-Z2.
-Le premier jalon est entièrement local : aucune connexion à la carte n’est nécessaire.
+Simulation locale et connexion optionnelle à un notebook via WebSocket.
+Aucune connexion à la carte n’est nécessaire pour la simulation.
 
 ## Lancer
 
@@ -40,9 +41,8 @@ Le sélecteur est partagé entre les deux modes. Rien n’est persisté au redé
 - `data/mux_demux_repository.dart` : contrat et simulation locale.
 - `view/` : commandes, inspecteur, table, graphe CustomPainter animé.
 
-Le futur adaptateur notebook implémentera `MuxDemuxRepository`. Le transport
-et son cycle de connexion asynchrone seront définis au second jalon ; cette
-version ne prétend pas accéder au FPGA. Aucun notebook matériel n’est créé ici.
+L’adaptateur WebSocket implémente `MuxDemuxRepository` et communique avec le
+notebook via JSON. Le Cubit gère la connexion et le retour à la simulation.
 Les exercices VHDL existants ne sont pas modifiés.
 
 Les visuels de référence sont conservés dans `assets/design/` : fond sombre,
@@ -58,3 +58,24 @@ flutter build web
 
 Les tests couvrent toutes les combinaisons binaires MUX/DEMUX, les transitions
 Cubit et les interactions de l’interface sur écran large et étroit.
+
+## Connexion au notebook WebSocket
+
+Démarrer le serveur de `notebooks/mux_demux_bridge.ipynb`, puis cliquer sur
+**Connecter au serveur**. L’adresse par défaut est `ws://127.0.0.1:8765`.
+Les commandes MUX et DEMUX utilisent alors le protocole JSON du notebook et
+les indicateurs affichent ses réponses. **Revenir en simulation** restaure
+la session locale. Le statut indique la connexion au serveur ; il ne prouve
+pas une connexion matérielle à la FPGA (le notebook actuel simule la logique).
+
+Pour utiliser une autre adresse :
+
+```bash
+flutter run -d chrome --dart-define=WEBSOCKET_URL=ws://127.0.0.1:8765
+```
+
+`127.0.0.1` désigne la machine qui exécute l’application (ou le navigateur).
+Dans un Dev Container, vérifier le transfert du port 8765 dans VS Code.
+Sur un appareil Android physique, utiliser une adresse joignable du serveur.
+Une page web servie en HTTPS nécessite une connexion sécurisée `wss://`.
+La connexion est manuelle ; le démarrage reste en simulation locale.
