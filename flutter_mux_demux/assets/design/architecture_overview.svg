@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720">
+<style>
+text{font-family:Arial,sans-serif;fill:#e8edf5}.title{font-size:34px;font-weight:700}.h{font-size:24px;font-weight:700}.s{font-size:17px;fill:#b8c2d1}.box{fill:#171c24;stroke:#526174;stroke-width:2}.arr{stroke:#67d9c0;stroke-width:4;fill:none;marker-end:url(#m)}
+</style>
+<defs><marker id="m" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#67d9c0"/></marker></defs>
+<rect width="1200" height="720" fill="#0f1319"/>
+<text x="600" y="55" text-anchor="middle" class="title">MUX / DEMUX Flutter App — Architecture</text>
+<rect x="70" y="150" rx="18" width="250" height="120" class="box"/><text x="195" y="195" text-anchor="middle" class="h">Flutter UI</text><text x="195" y="230" text-anchor="middle" class="s">Tabs • Node graph • Controls</text>
+<rect x="405" y="150" rx="18" width="250" height="120" class="box"/><text x="530" y="195" text-anchor="middle" class="h">BLoC / Cubit</text><text x="530" y="230" text-anchor="middle" class="s">Events • State • Routing state</text>
+<rect x="740" y="150" rx="18" width="380" height="120" class="box"/><text x="930" y="195" text-anchor="middle" class="h">Repository / Service</text><text x="930" y="230" text-anchor="middle" class="s">Transport abstraction • API boundary</text>
+<path d="M320 210 L405 210" class="arr"/><path d="M655 210 L740 210" class="arr"/>
+<rect x="740" y="380" rx="18" width="380" height="120" class="box"/><text x="930" y="425" text-anchor="middle" class="h">Python Notebook Bridge</text><text x="930" y="460" text-anchor="middle" class="s">Prototype low-level hardware access</text>
+<rect x="405" y="380" rx="18" width="250" height="120" class="box"/><text x="530" y="425" text-anchor="middle" class="h">Low-level I/O</text><text x="530" y="460" text-anchor="middle" class="s">HTTP • WebSocket • MMIO later</text>
+<rect x="70" y="380" rx="18" width="250" height="120" class="box"/><text x="195" y="425" text-anchor="middle" class="h">PYNQ-Z2 FPGA</text><text x="195" y="460" text-anchor="middle" class="s">MUX / DEMUX VHDL logic</text>
+<path d="M930 270 L930 380" class="arr"/><path d="M740 440 L655 440" class="arr"/><path d="M405 440 L320 440" class="arr"/>
+<text x="600" y="610" text-anchor="middle" class="s">Design rule: UI knows presentation; BLoC knows state; Repository/Service knows communication.</text>
+</svg>

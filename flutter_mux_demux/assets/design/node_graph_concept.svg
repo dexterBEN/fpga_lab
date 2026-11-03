@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="800" viewBox="0 0 1400 800">
+<style>
+text{font-family:Arial,sans-serif;fill:#eef2f7}.title{font-size:34px;font-weight:700}.h{font-size:22px;font-weight:700}.s{font-size:16px;fill:#aeb8c7}.node{fill:#171c24;stroke:#536275;stroke-width:2}.active{fill:#17322e;stroke:#55e0c2;stroke-width:4}.edge{stroke:#687485;stroke-width:3;fill:none}.hot{stroke:#55e0c2;stroke-width:7;fill:none;marker-end:url(#m)}.thin{stroke:#8090a4;stroke-width:2;fill:none;marker-end:url(#g)}
+</style>
+<defs><marker id="m" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#55e0c2"/></marker><marker id="g" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#8090a4"/></marker></defs>
+<rect width="1400" height="800" fill="#0f1319"/>
+<text x="700" y="55" text-anchor="middle" class="title">Node Graph UI Direction — MUX Tab</text>
+<rect x="70" y="95" rx="12" width="120" height="48" class="active"/><text x="130" y="127" text-anchor="middle" class="h">MUX</text>
+<rect x="205" y="95" rx="12" width="140" height="48" class="node"/><text x="275" y="127" text-anchor="middle" class="h">DEMUX</text>
+<rect x="90" y="190" rx="14" width="150" height="70" class="node"/><text x="165" y="220" text-anchor="middle" class="h">D0</text><text x="165" y="244" text-anchor="middle" class="s">0</text>
+<rect x="90" y="300" rx="14" width="150" height="70" class="active"/><text x="165" y="330" text-anchor="middle" class="h">D1</text><text x="165" y="354" text-anchor="middle" class="s">1</text>
+<rect x="90" y="410" rx="14" width="150" height="70" class="node"/><text x="165" y="440" text-anchor="middle" class="h">D2</text><text x="165" y="464" text-anchor="middle" class="s">0</text>
+<rect x="90" y="520" rx="14" width="150" height="70" class="node"/><text x="165" y="550" text-anchor="middle" class="h">D3</text><text x="165" y="574" text-anchor="middle" class="s">1</text>
+<rect x="455" y="300" rx="22" width="250" height="180" class="node"/><text x="580" y="370" text-anchor="middle" class="h">MUX 4→1</text><text x="580" y="410" text-anchor="middle" class="s">selected: D1</text>
+<rect x="470" y="590" rx="14" width="220" height="78" class="node"/><text x="580" y="622" text-anchor="middle" class="h">S1 S0</text><text x="580" y="650" text-anchor="middle" class="s">01</text>
+<rect x="850" y="340" rx="16" width="180" height="95" class="active"/><text x="940" y="378" text-anchor="middle" class="h">Y</text><text x="940" y="409" text-anchor="middle" class="s">1</text>
+<path d="M240 225 L455 350" class="thin"/><path d="M240 335 L455 365" class="hot"/><path d="M240 445 L455 400" class="thin"/><path d="M240 555 L455 430" class="thin"/>
+<path d="M580 590 L580 480" class="thin"/><path d="M705 390 L850 390" class="hot"/>
+<rect x="1100" y="230" rx="18" width="230" height="300" class="node"/><text x="1215" y="270" text-anchor="middle" class="h">Inspector</text>
+<text x="1140" y="320" class="s">Mode: MUX</text><text x="1140" y="355" class="s">Selector: 01</text><text x="1140" y="390" class="s">Route: D1 → Y</text><text x="1140" y="425" class="s">Y: 1</text><text x="1140" y="460" class="s">Source: Simulation</text><text x="1140" y="495" class="s">FPGA: Offline</text>
+<text x="700" y="735" text-anchor="middle" class="s">Active edges can glow and carry a moving data pulse.</text>
+</svg>

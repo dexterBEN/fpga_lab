@@ -9,10 +9,12 @@
             "extensions": [
                 "VHDL-LS.rust_hdl",
                 "ms-vscode.makefile-tools",
-                "eamodio.gitlens"
+                "eamodio.gitlens",
+                "ms-python.python",
+                "ms-toolsai.jupyter"
             ]
         }
     },
-    "postCreateCommand": "ghdl --version",
+    "postCreateCommand": "bash .devcontainer/scripts/setup-python.sh && ghdl --version && python3 --version && jupyter --version",
     "remoteUser": "vscode"
 }
