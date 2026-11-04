@@ -5,6 +5,7 @@
 *.runs/
 *.sim/
 *.gen/
+*.Xil/
 
 # Vivado temporary / journal / logs
 *.jou
