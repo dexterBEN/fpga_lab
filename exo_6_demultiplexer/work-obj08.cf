@@ -1,7 +1,0 @@
-v 4
-file . "sim/demultiplexer_tb.vhd" "021d36e0a7173dcb24d41036c3cf19a5bf2487da" "20261102223758.554":
-  entity demultiplexer_tb at 1( 0) + 0 on 25;
-  architecture tb of demultiplexer_tb at 10( 125) + 0 on 26;
-file . "src/demultiplexer.vhd" "faf4541ed18d687af21c55e35baaea37af3771ee" "20261102223758.544":
-  entity demultiplexer at 1( 0) + 0 on 23;
-  architecture demultiplexer_arch of demultiplexer at 19( 369) + 0 on 24;

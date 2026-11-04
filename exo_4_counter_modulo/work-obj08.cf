@@ -1,7 +1,0 @@
-v 4
-file . "sim/counter_modulo_tb.vhd" "5e8afb3797bd1484e0d94df4e768a6ec0cb6232e" "20261101175201.252":
-  entity counter_modulo_tb at 1( 0) + 0 on 21;
-  architecture tb of counter_modulo_tb at 10( 127) + 0 on 22;
-file . "src/counter_modulo.vhd" "d73f762b1e44edfae1ba6bf661e6a1859007aa76" "20261101175201.238":
-  entity counter_modulo at 1( 0) + 0 on 19;
-  architecture counter_modulo_arch of counter_modulo at 14( 266) + 0 on 20;
