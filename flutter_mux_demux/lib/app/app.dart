@@ -20,7 +20,7 @@ class MuxDemuxApp extends StatelessWidget {
       websocketRepository: WebSocketMuxDemuxRepository(
         url: const String.fromEnvironment(
           'WEBSOCKET_URL',
-          defaultValue: 'ws://127.0.0.1:8765',
+          defaultValue: 'ws://192.168.200.120:8765',
         ),
       ),
     ),

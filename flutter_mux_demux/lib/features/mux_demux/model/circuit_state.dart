@@ -53,6 +53,7 @@ class CircuitState {
     String? lastError,
     bool clearError = false,
     bool? remoteMuxOutput,
+    bool clearRemoteMuxOutput = false,
   }) => CircuitState(
     mode: mode ?? this.mode,
     selector: selector ?? this.selector,
@@ -62,6 +63,8 @@ class CircuitState {
     dataSource: dataSource ?? this.dataSource,
     connectionState: connectionState ?? this.connectionState,
     lastError: clearError ? null : lastError ?? this.lastError,
-    remoteMuxOutput: remoteMuxOutput ?? this.remoteMuxOutput,
+    remoteMuxOutput: clearRemoteMuxOutput
+        ? null
+        : remoteMuxOutput ?? this.remoteMuxOutput,
   );
 }

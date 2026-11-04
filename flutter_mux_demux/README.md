@@ -1,54 +1,58 @@
 # MUX / DEMUX Visualizer
 
-Application Flutter de simulation des exercices 5 et 6 sur PYNQ-Z2.
-Simulation locale et connexion optionnelle à un notebook via WebSocket.
-Aucune connexion à la carte n’est nécessaire pour la simulation.
+A Flutter application for simulating PYNQ-Z2 exercises 5 and 6.
+Supports local simulation and an optional WebSocket connection to a notebook.
+No board connection is required for simulation.
 
-## Lancer
+## Run
 
 ```bash
 cd flutter_mux_demux
 flutter pub get
 flutter run -d linux
-# Ou dans Chrome :
+# Or in Chrome:
 flutter run -d chrome
 ```
 
-Android, Linux et web sont initialisés. Le lancement Linux nécessite les outils
-Flutter desktop usuels (Clang, CMake, Ninja, GTK). `flutter doctor` indique les
-prérequis manquants sur votre machine.
+Android, Linux, and web platform configurations are included. Running on Linux
+requires the usual Flutter desktop tools (Clang, CMake, Ninja, GTK).
+Run `flutter doctor` to identify missing prerequisites on your machine.
 
-## Utilisation
+## Usage
 
-- Onglets MUX 4→1 et DEMUX 1→4.
-- Entrées modifiables par les interrupteurs ou directement dans le graphe.
-- Sélecteur réglable via 00…11, les interrupteurs S1/S0 ou la table.
-- Chemin sélectionné turquoise, même au niveau logique 0 ; impulsions lorsque
-  le signal transporté vaut 1. Les animations respectent la réduction des mouvements.
-- Inspecteur des sorties et table de sélection synchronisés.
-- Sur un écran étroit, le graphe défile horizontalement pour conserver sa lisibilité.
+- Separate MUX 4→1 and DEMUX 1→4 tabs.
+- Change inputs using the switches or directly in the graph.
+- Set the selector using 00…11, the S1/S0 switches, or the selection table.
+- The selected path is turquoise, even at logic level 0. Pulses appear when
+  the routed signal is 1. Animations respect the reduced motion setting.
+- Synchronized output inspector and selection table.
+- On narrow screens, the graph scrolls horizontally to remain readable.
 
-Les valeurs d’entrée sont conservées lors du changement d’onglet, durant la session.
-Le sélecteur est partagé entre les deux modes. Rien n’est persisté au redémarrage.
+Input values are retained when switching tabs during a session.
+The selector is shared between both modes. Nothing is persisted across restarts.
 
 ## Architecture
 
-`lib/app` : thème et injection du Cubit.
+`lib/app`: theme and Cubit injection.
 
-`lib/features/mux_demux` :
-- `model/circuit_state.dart` : état immuable et résultats combinatoires.
-- `bloc/mux_demux_cubit.dart` : actions de l’utilisateur.
-- `data/mux_demux_repository.dart` : contrat et simulation locale.
-- `view/` : commandes, inspecteur, table, graphe CustomPainter animé.
+`lib/features/mux_demux`:
 
-L’adaptateur WebSocket implémente `MuxDemuxRepository` et communique avec le
-notebook via JSON. Le Cubit gère la connexion et le retour à la simulation.
-Les exercices VHDL existants ne sont pas modifiés.
+- `model/circuit_state.dart`: immutable state and combinational results.
+- `bloc/mux_demux_cubit.dart`: user actions.
+- `data/mux_demux_repository.dart`: repository contract and local simulation.
+- `view/`: controls, inspector, table, and animated CustomPainter graph.
 
-Les visuels de référence sont conservés dans `assets/design/` : fond sombre,
-nœuds encadrés, routes turquoise et sélecteur sous le composant.
+The WebSocket adapter implements `MuxDemuxRepository` and communicates with the
+notebook using JSON. A single WebSocket reader handles responses and physical
+input events. Repositories publish `states` (`Stream<CircuitState>`, broadcast
+without replay); the Cubit observes only the active source and serializes commands.
+The Cubit owns the repositories and closes their streams when it is closed.
+The existing VHDL exercises are unchanged.
 
-## Vérification
+Reference visuals are stored in `assets/design/`: a dark background, outlined
+nodes, turquoise routes, and a selector below the component.
+
+## Validation
 
 ```bash
 flutter analyze
@@ -56,26 +60,45 @@ flutter test
 flutter build web
 ```
 
-Les tests couvrent toutes les combinaisons binaires MUX/DEMUX, les transitions
-Cubit et les interactions de l’interface sur écran large et étroit.
+Tests cover all binary MUX/DEMUX combinations, Cubit transitions, and UI
+interactions on wide and narrow screens.
 
-## Connexion au notebook WebSocket
+## WebSocket notebook connection
 
-Démarrer le serveur de `notebooks/mux_demux_bridge.ipynb`, puis cliquer sur
-**Connecter au serveur**. L’adresse par défaut est `ws://127.0.0.1:8765`.
-Les commandes MUX et DEMUX utilisent alors le protocole JSON du notebook et
-les indicateurs affichent ses réponses. **Revenir en simulation** restaure
-la session locale. Le statut indique la connexion au serveur ; il ne prouve
-pas une connexion matérielle à la FPGA (le notebook actuel simule la logique).
+Start the server in `notebooks/mux_demux_bridge.ipynb`, then click
+**Connecter au serveur** (Connect to server). The default address is
+`ws://192.168.200.120:8765` (configurable through `WEBSOCKET_URL` to match the
+board's actual address).
+MUX and DEMUX commands then use the notebook's JSON protocol, and the indicators
+display its responses. **Revenir en simulation** (Return to simulation) restores
+the local session. The MUX remains simulated in Python; the DEMUX uses FPGA
+outputs read through MMIO in the notebook. `physical_inputs` events automatically
+update D, S0/S1 through the selector, and Y0…Y3 without sending a command back
+or switching the visible tab. The selector remains shared between modes.
+The status indicates the server connection, not hardware validation.
 
-Pour utiliser une autre adresse :
+Connecting sends no commands and does not push old Flutter values to the board.
+The backend does not yet guarantee a physical input snapshot on every connection:
+before the first event, values come from the repository's last snapshot or its
+initial values. Change a physical input to receive a measurement.
+`get_physical_inputs` is not called automatically because its current
+implementation also writes to the DEMUX.
+
+Server errors retain their message and leave the socket reusable. A malformed or
+inconsistent message, or a timeout, invalidates the session and terminates pending
+commands. Socket closure while idle is also reported. To reconnect, return to
+simulation and use the connection button again. There is no automatic retry,
+request ID, or revision tracking: states follow reception order.
+Late responses from an invalidated session are ignored.
+
+To use a different address:
 
 ```bash
-flutter run -d chrome --dart-define=WEBSOCKET_URL=ws://127.0.0.1:8765
+flutter run -d chrome --dart-define=WEBSOCKET_URL=ws://192.168.200.120:8765
 ```
 
-`127.0.0.1` désigne la machine qui exécute l’application (ou le navigateur).
-Dans un Dev Container, vérifier le transfert du port 8765 dans VS Code.
-Sur un appareil Android physique, utiliser une adresse joignable du serveur.
-Une page web servie en HTTPS nécessite une connexion sécurisée `wss://`.
-La connexion est manuelle ; le démarrage reste en simulation locale.
+`127.0.0.1` refers to the machine running the application or browser.
+When the server runs in a Dev Container, check port 8765 forwarding in VS Code.
+On a physical Android device, use a reachable server address.
+A web page served over HTTPS requires a secure `wss://` connection.
+Connecting is manual; the application starts in local simulation mode.
