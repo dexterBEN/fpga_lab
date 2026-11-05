@@ -1,0 +1,4 @@
+# Generated waveforms and deployment artifacts. Keep notebooks and Tcl sources.
+/wave/*.ghw
+/overlay/*.bit
+/overlay/*.hwh
