@@ -2,3 +2,6 @@
 /wave/*.ghw
 /overlay/*.bit
 /overlay/*.hwh
+
+# Generated Vivado PS configuration report.
+/NA/ps7_summary.html

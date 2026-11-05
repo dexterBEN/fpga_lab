@@ -2,6 +2,9 @@
 
 Run on PYNQ with the matching registers.bit/registers.hwh overlay.
 There is no hardware ACK. Only one caller may own this driver/GPIO.
+The settling reads rely on the shared clock and standard uncached PYNQ MMIO;
+they do not confirm command completion. Do not reuse this protocol unchanged
+for multiple clients, asynchronous clock domains, or stronger transaction guarantees.
 """
 
 DATA_MASK = 0x00F
@@ -27,6 +30,7 @@ class RegisterControl:
         self.reset()
 
     def _settle(self):
+        # Timing allowance only: these reads are not a hardware ACK.
         # Each completed uncached MMIO read is an AXI transaction in the
         # common PL clock domain. Eight reads leave more than the two reset
         # release edges + one rearming edge. No Python sleep generates pulses.
@@ -45,6 +49,13 @@ class RegisterControl:
         return self._settle()
 
     def reset(self):
+        """Request a synchronous functional reset through GPIO bit 8.
+
+        The adapter samples this request on a rising clock edge; it does
+        not assert reset immediately. The infrastructure input aresetn
+        asserts reset asynchronously. Both use the controlled two-edge
+        release, followed by request rearming. There is no completion ACK.
+        """
         base = self.shadow & ~(LOAD | SHIFT | RESET)
         self.write_command(base | RESET)
         self.write_command(base)
