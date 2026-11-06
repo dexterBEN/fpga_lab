@@ -310,15 +310,3 @@ The provided run also did not include a full PYNQ-Z2 pin mapping and electrical 
 
 **Conclusion:** Exercise 7 successfully revisited basic parallel and shift registers, VHDL hierarchy, multiplexing, self-checking simulation and FPGA primitive inference. The RTL verification and the constrained internal routed timing checks passed. External I/O timing and real hardware behavior remain intentionally outside the validated scope of this simplified exercise. A future, separate experiment could use buttons/LEDs or Vivado VIO to test hardware without rebuilding the earlier AXI/Jupyter integration.
 
----
-
-## 9. Evidence and provenance
-
-This report is based on materials shared in the conversation on 6 November 2026:
-
-- VHDL source listings for the three entities and the system testbench.
-- GHDL terminal result reporting success at 137,500 ps.
-- Screenshots from VaporView and Vivado 2024.1 (all images in `assets/`).
-- The pasted `report_utilization -hierarchical`, `report_timing_summary`, and `report_methodology` outputs for the synthesized and fully routed `register_system`.
-
-The original Vivado project, source files, GHW waveform files and complete timing logs are **not** reproduced in this ZIP. The archive contains this Markdown report and selected screenshots, not a runnable FPGA project.
