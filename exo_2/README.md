@@ -22,7 +22,7 @@ This attempt was pedagogically useful because it revealed an important rule: **a
 
 ## First Version
 
-![First VHDL attempt](assets/exo2_first_attempt_vhdl.png)
+![First VHDL attempt](../assets/exo2_first_attempt_vhdl.png)
 
 Synthesis correctly created an `FDRE` flip-flop:
 
@@ -32,7 +32,7 @@ SW0  → IBUF ──────→ D
                     FDRE → Q → OBUF → LED0
 ```
 
-![FDRE with BTN0 used as clock](assets/exo2_fdre_button_clock.png)
+![FDRE with BTN0 used as clock](../assets/exo2_fdre_button_clock.png)
 
 However, implementation failed with:
 
@@ -40,7 +40,7 @@ However, implementation failed with:
 [Place 30-574] Poor placement for routing between an IO pin and BUFG
 ```
 
-![Implementation error](assets/exo2_implementation_error.png)
+![Implementation error](../assets/exo2_implementation_error.png)
 
 ### Why?
 
@@ -97,7 +97,7 @@ end flip_flop_arch;
 
 Synthesis automatically recognizes `if btn0 = '1'` as a **Clock Enable** and maps it directly to the `CE` input of the FDRE.
 
-![FDRE with real clock and CE](assets/exo2_fdre_clock_enable.png)
+![FDRE with real clock and CE](../assets/exo2_fdre_clock_enable.png)
 
 ## Physical Mapping
 
