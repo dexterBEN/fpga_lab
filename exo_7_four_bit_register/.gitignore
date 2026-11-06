@@ -1,7 +1,0 @@
-# Generated waveforms and deployment artifacts. Keep notebooks and Tcl sources.
-/wave/*.ghw
-/overlay/*.bit
-/overlay/*.hwh
-
-# Generated Vivado PS configuration report.
-/NA/ps7_summary.html
