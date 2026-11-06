@@ -1,0 +1,95 @@
+{
+  "extensionVersion": "1.6.0",
+  "fileName": "/home/dexter/Documents/fpga_lab/exo_7_four_bit_register/shift_register.ghw",
+  "markerTime": null,
+  "altMarkerTime": null,
+  "displayTimeUnit": "fs",
+  "selectedSignal": {
+    "name": "shift_register_tb.q",
+    "msb": 3,
+    "lsb": 0
+  },
+  "zoomRatio": 0.0000020495342443292774,
+  "scrollLeft": 0,
+  "defaultPixelTime": 1000000000,
+  "displayedSignals": [
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 0,
+      "name": "shift_register_tb.clk",
+      "numberFormat": "binary",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "clk",
+      "renderType": "binary",
+      "valueLinkEnable": false
+    },
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 5,
+      "name": "shift_register_tb.finished",
+      "numberFormat": "enum",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "finished",
+      "renderType": "binary",
+      "valueLinkEnable": false
+    },
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 4,
+      "name": "shift_register_tb.q",
+      "numberFormat": "hexadecimal",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "q",
+      "renderType": "multiBit",
+      "valueLinkEnable": false
+    },
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 1,
+      "name": "shift_register_tb.reset",
+      "numberFormat": "binary",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "reset",
+      "renderType": "binary",
+      "valueLinkEnable": false
+    },
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 3,
+      "name": "shift_register_tb.serial_in",
+      "numberFormat": "binary",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "serial_in",
+      "renderType": "binary",
+      "valueLinkEnable": false
+    },
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 2,
+      "name": "shift_register_tb.shift",
+      "numberFormat": "binary",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "shift",
+      "renderType": "binary",
+      "valueLinkEnable": false
+    }
+  ]
+}

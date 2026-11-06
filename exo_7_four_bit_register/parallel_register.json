@@ -1,0 +1,95 @@
+{
+  "extensionVersion": "1.6.0",
+  "fileName": "/home/dexter/Documents/fpga_lab/exo_7_four_bit_register/parallel_register.ghw",
+  "markerTime": null,
+  "altMarkerTime": null,
+  "displayTimeUnit": "fs",
+  "selectedSignal": {
+    "name": "parallel_register_tb.d",
+    "msb": 3,
+    "lsb": 0
+  },
+  "zoomRatio": 0.0000023275877378453125,
+  "scrollLeft": 0,
+  "defaultPixelTime": 1000000000,
+  "displayedSignals": [
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 0,
+      "name": "parallel_register_tb.clk",
+      "numberFormat": "binary",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "clk",
+      "renderType": "binary",
+      "valueLinkEnable": false
+    },
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 1,
+      "name": "parallel_register_tb.reset",
+      "numberFormat": "binary",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "reset",
+      "renderType": "binary",
+      "valueLinkEnable": false
+    },
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 4,
+      "name": "parallel_register_tb.q",
+      "numberFormat": "hexadecimal",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "q",
+      "renderType": "multiBit",
+      "valueLinkEnable": false
+    },
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 5,
+      "name": "parallel_register_tb.finished",
+      "numberFormat": "enum",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "finished",
+      "renderType": "binary",
+      "valueLinkEnable": false
+    },
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 2,
+      "name": "parallel_register_tb.enable",
+      "numberFormat": "binary",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "enable",
+      "renderType": "binary",
+      "valueLinkEnable": false
+    },
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 3,
+      "name": "parallel_register_tb.d",
+      "numberFormat": "hexadecimal",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "d",
+      "renderType": "multiBit",
+      "valueLinkEnable": false
+    }
+  ]
+}
