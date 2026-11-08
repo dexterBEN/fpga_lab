@@ -324,7 +324,7 @@ The standalone RTL verification was completed on **6 November 2026**; the **PS/P
 
 **Conclusion:** Exercise 7 now has both **successful standalone RTL simulation/timing analysis** and **successful physical-board register tests**. This does **not** establish that the previously observed intermittent MMIO hangs were permanently fixed or conclusively root-caused.
 
-## 9. PYNQ-Z2 PS/PL integration and hardware validation (8 November 2026)
+## 9. PYNQ-Z2 PS/PL integration and hardware validation
 
 ### 9.1 Validated hardware configuration
 
@@ -478,11 +478,3 @@ In particular, the observed write included `WVALID && WREADY` followed by `BVALI
 
 For investigation history and evidence beyond the selected figures in this README, see [GitHub issue #1](https://github.com/dexterBEN/fpga_lab/issues/1).
 
-## 10. Evidence, provenance, and preservation of earlier figures
-
-- The existing Figures 1–5 and waveform links remain referenced under their **original filenames** in `assets/`. They were **not replaced or removed** by this README update.
-- The three **new** pictures included in the companion ZIP are genuine screenshots shared during the 8 November hardware debug session. No synthetic screenshots were created.
-- The 8 November notebook output provided in the conversation includes all functional PASS statuses, including SIPO and output selection. These are reproduced as text above; there was no need to invent a screenshot of the notebook summary.
-- Detailed 6 November synthesis/timing results above remain preserved as originally reported, but their scope is now explicitly called out as standalone.
-
-The accompanying ZIP is an **overlay patch**, not a full repository snapshot: it contains this revised README and only the **three new** figures. Existing assets must remain in the repository unchanged when applying it.
