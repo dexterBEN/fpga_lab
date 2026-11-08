@@ -2,8 +2,7 @@
 
 **FPGA Lab · Technical report and learning summary**  
 **Target board:** PYNQ-Z2 (Zynq-7020, `xc7z020clg400-1`)  
-**Toolchain:** GHDL (VHDL-2008 simulation), VaporView (VS Code waveform inspection), Vivado 2024.1 (synthesis, implementation and timing)  
-**Report date:** 6 November 2026 · **Hardware validation update:** 8 November 2026  
+**Toolchain:** GHDL (VHDL-2008 simulation), VaporView (VS Code waveform inspection), Vivado 2024.1 (synthesis, implementation and timing)   
 **Validation scope:** RTL simulation, Vivado synthesis/timing analysis **and PYNQ-Z2 hardware validation** (50 MHz PS/PL design; details in Section 9)
 
 ## 1. Purpose and scope
