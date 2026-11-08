@@ -3,8 +3,8 @@
 **FPGA Lab · Technical report and learning summary**  
 **Target board:** PYNQ-Z2 (Zynq-7020, `xc7z020clg400-1`)  
 **Toolchain:** GHDL (VHDL-2008 simulation), VaporView (VS Code waveform inspection), Vivado 2024.1 (synthesis, implementation and timing)  
-**Report date:** 6 November 2026  
-**Validation scope:** RTL simulation and Vivado design analysis; **no on-board functional test**
+**Report date:** 6 November 2026 · **Hardware validation update:** 8 November 2026  
+**Validation scope:** RTL simulation, Vivado synthesis/timing analysis **and PYNQ-Z2 hardware validation** (50 MHz PS/PL design; details in Section 9)
 
 ## 1. Purpose and scope
 
@@ -15,7 +15,7 @@ The purpose of this exercise is to revisit **sequential digital logic** by imple
 
 A third, lightweight `register_system` module composes both registers and multiplexes their outputs. The focus is on how VHDL describes clocked hardware, how a testbench proves specified behaviors, and what Vivado actually synthesizes.
 
-The earlier AXI GPIO / Zynq Processing System / Jupyter Notebook integration was deliberately **removed from the core exercise**. Those topics are valuable but represent a separate PS–PL integration project. Here, simulation is the primary functional verification method, complemented by FPGA synthesis and timing analysis.
+The **core learning exercise** remains the VHDL register design, GHDL simulation, and standalone Vivado analysis described in Sections 3–7. A **separate PS–PL integration of the same RTL** was subsequently implemented and successfully tested on the PYNQ-Z2 on 8 November 2026. Section 9 documents this later validation without conflating its 50 MHz clock and AXI peripherals with the earlier, standalone 125 MHz timing experiment.
 
 ## 2. Project structure
 
@@ -26,17 +26,23 @@ exo_7_four_bit_register/
 ├── src/
 │   ├── parallel_register.vhd
 │   ├── shift_register.vhd
-│   └── register_system.vhd
+│   ├── register_system.vhd
+│   └── register_command_adapter.vhd  # PS/PL integration helper
 ├── sim/
 │   ├── parallel_register_tb.vhd
 │   ├── shift_register_tb.vhd
 │   └── register_system_tb.vhd
 ├── constraints/
-│   └── parallel_register.xdc   # shared clock constraint in the tested project
+│   └── parallel_register.xdc   # standalone historical constraint (see Section 6)
+├── notebooks/
+│   └── register_test.ipynb     # validated PS/PL notebook
+├── scripts/
+│   └── configure_debug_hub.tcl # Debug Hub timing configuration
+├── assets/                    # original figures + three new hardware captures
 └── exo_7_four_bit_register.xpr
 ```
 
-> The XDC filename still says `parallel_register`, although its `create_clock` constraint is also applicable to `shift_register` and `register_system`, because all expose a port named `clk`. Renaming it to `register_clock.xdc` would improve clarity (update the Vivado project reference if doing so).
+> **Two distinct contexts:** `parallel_register.xdc` with `create_clock -period 8.000` belongs to the historical **standalone 125 MHz analysis** in Section 6. It was **disabled** for the validated Zynq `design_1` implementation, where the PS drives FCLK0 at **50 MHz**. Do not reactivate the standalone constraint in the PS/PL design. Renaming the original XDC would require updating the Vivado project reference.
 
 ## 3. Design fundamentals
 
@@ -231,7 +237,7 @@ The supplied **hierarchical synthesis utilization report** states:
 
 This confirms the intended eight bits of sequential storage. The expanded schematic shows four `FDCE` instances per register and **four `LUT3`-labeled selection functions**, whereas the hierarchy utilization report shows **two LUTs** in total. The screenshots and resource report are different views of the synthesis result; the supplied evidence alone does not establish exactly how those four schematic functions are accounted for in two physical LUT resources. A cell-level utilization report and primitive properties would be needed to resolve that distinction rigorously. **Do not report four physical LUTs from the schematic alone.**
 
-## 6. Timing constraints and analysis
+## 6. Standalone RTL timing constraints and analysis
 
 The exercise's XDC defined the input clock:
 
@@ -295,18 +301,188 @@ The provided run also did not include a full PYNQ-Z2 pin mapping and electrical 
 7. **A clean RTL simulation is not a hardware test.** GHDL validates the tested logic, while Vivado reports mapping and timing of the constrained design.
 8. **Synthesis and routed results must not be conflated.** Placement and routing change delay estimates and may change netlist structure.
 
+
 ## 8. Verification status and conclusion
+
+The standalone RTL verification was completed on **6 November 2026**; the **PS/PL hardware validation** followed on **8 November 2026**. They use different clock/timing configurations and must not be conflated.
 
 | Verification stage | Status | Evidence / qualification |
 |---|---|---|
 | Standalone VHDL RTL | Completed | `parallel_register.vhd`, `shift_register.vhd` |
-| Standalone waveforms | Inspected | VaporView screenshots |
-| Composed system RTL test | **Passed** | 6 scenarios, GHDL exit code 0, 137.5 ns |
-| Vivado synthesis | **Completed** | 8 FFs, 2 LUTs in hierarchical synthesis utilization |
-| Vivado routing | **Completed** | Final timing report: Design State Routed |
-| Constrained 125 MHz internal timing | **Met** | WNS +6.746 ns; WHS +0.294 ns; TNS 0 |
-| External interface timing | **Incomplete** | 12 TIMING-18 warnings; no I/O delay contract |
-| PYNQ-Z2 execution | **Not performed** | No functional board test is documented |
+| Standalone waveforms | Inspected | Original VaporView screenshots in `assets/` |
+| Composed system RTL test | **PASS** | Six GHDL scenarios, completion at 137.5 ns |
+| Standalone Vivado synthesis | Completed | 8 flip-flops; 2 LUTs in hierarchical utilization |
+| Standalone routed timing at 125 MHz | Met | Setup WNS +6.746 ns; WHS +0.294 ns; TNS 0 |
+| Standalone external I/O timing | Incomplete | 12 TIMING-18 warnings; no physical board I/O timing contract |
+| PS/PL Zynq integration | **PASS** | `design_1`, AXI GPIO, command adapter and FPGA register system |
+| AXI GPIO read and write | **PASS for captured transactions** | Read returned data; write produced `BRESP=OKAY` |
+| Parallel register on PYNQ-Z2 | **PASS** | Expected `0xA`, actual `0xA` |
+| SIPO shift register on PYNQ-Z2 | **PASS** | Sequence `1,0,1,1`, final output `0xB` |
+| Output multiplexer on PYNQ-Z2 | **PASS** | `mode=0` -> `0xA`; `mode=1` -> `0xB` |
+| Software-driven reset | Not available | Adapter `reset_out` is not connected to `register_system.reset` |
+| Original intermittent MMIO hangs | Root cause **unconfirmed** | Operational success demonstrated, but no controlled A/B isolation |
 
-**Conclusion:** Exercise 7 successfully revisited basic parallel and shift registers, VHDL hierarchy, multiplexing, self-checking simulation and FPGA primitive inference. The RTL verification and the constrained internal routed timing checks passed. External I/O timing and real hardware behavior remain intentionally outside the validated scope of this simplified exercise. A future, separate experiment could use buttons/LEDs or Vivado VIO to test hardware without rebuilding the earlier AXI/Jupyter integration.
+**Conclusion:** Exercise 7 now has both **successful standalone RTL simulation/timing analysis** and **successful physical-board register tests**. This does **not** establish that the previously observed intermittent MMIO hangs were permanently fixed or conclusively root-caused.
 
+## 9. PYNQ-Z2 PS/PL integration and hardware validation (8 November 2026)
+
+### 9.1 Validated hardware configuration
+
+| Item | Validated `design_1` configuration |
+|---|---|
+| Board / silicon | PYNQ-Z2 / XC7Z020 (`xc7z020clg400-1`) |
+| Tool | Vivado 2024.1; PYNQ Linux + Python notebook |
+| PS AXI master | `processing_system7_0/M_AXI_GP0` |
+| AXI slave | `axi_gpio_0/S_AXI`, mapped at `0x41200000`, 4 KiB MMIO mapping |
+| Channel 1 | 9 output command bits (`C_GPIO_WIDTH=9`, `C_ALL_OUTPUTS=1`) |
+| Channel 2 | 4 input bits (`C_GPIO2_WIDTH=4`, `C_ALL_INPUTS_2=1`) |
+| Clock | `processing_system7_0/FCLK_CLK0`, **50 MHz runtime target** |
+| Clock/reset | `rst_ps7_0_50M`, `dcm_locked` tied to logic 1, PS reset connected |
+| ILA | `ila_0` for reset observations; `system_ila_0` on `ps7_0_axi_periph/M00_AXI` |
+| Notebook | [`notebooks/register_test.ipynb`](notebooks/register_test.ipynb) |
+
+**This is not the standalone 125 MHz implementation discussed in Section 6.** If following a separate 100 MHz script-generated overlay described elsewhere in the repository, do not substitute this notebook's 50 MHz configuration without first confirming that overlay's actual clock design and address map.
+
+```text
+                             Zynq-7000 PS (ARM + Linux)
+                               PYNQ Python / MMIO
+                                        |
+                               M_AXI_GP0 AXI bus
+                                        v
+                           +-------------------------+
+                           | ps7_0_axi_periph        |
+                           +------------+------------+
+                                        |
+                                        v
+                     +-----------------------------------+
+                     | axi_gpio_0 @ 0x41200000           |
+                     | CH1: gpio_io_o[8:0]  (commands)   |
+                     | CH2: gpio2_io_i[3:0] (results)    |
+                     +--------+----------------^---------+
+                              |                |
+                              v                |
+                 +-----------------------+     |
+                 | register_command_     |     |
+                 | adapter               |     |
+                 | LOAD / SHIFT pulses   |     |
+                 +-----------+-----------+     |
+                             |                 |
+                   +---------v--------------+  |
+                   | register_system        |  |
+                   |                        |  |
+                   | +---------+ +--------+ |  |
+                   | |parallel | | SIPO   | |  |
+                   | +----+----+ +---+----+ |  |
+                   |      +----MUX---+      |  |
+                   |        mode             |  |
+                   +----------+--------------+  |
+                              | q[3:0]          |
+                              +-----------------+
+
+  FCLK0 (50 MHz) ---> AXI peripherals + adapter + register_system
+  proc_sys_reset ---> active-high register reset / active-low AXI resets
+```
+
+### 9.2 Command layout and register addresses
+
+```text
+CH1 commands[8:0]
+      bit8   bit7  bit6   bit5   bit4   bits3:0
+     +-----+-----+-----+------+-------+-----------+
+     |RESET|SHIFT|LOAD | MODE |SERIAL | D[3:0]    |
+     +-----+-----+-----+------+-------+-----------+
+       100   080   040    020    010     00F   (hex masks)
+```
+
+- `RESET=0x100` is **not wired** to the register system reset; it does not clear storage.
+- `LOAD=0x040` and `SHIFT=0x080` are synchronized and converted to one-clock pulses on a **0->1 request transition**.
+- `MODE=0x020`: `0` exposes the parallel register; `1` exposes SIPO. Mode does not block the other register from updating.
+- AXI GPIO register offsets: CH1 DATA `0x00`, CH1 TRI `0x04`, CH2 DATA `0x08`, CH2 TRI `0x0C`.
+
+Observed CH1 and CH2 `TRI` reads were both `0xFFFFFFFF` in the tested setup despite fixed output/input directions configured in Vivado. These readbacks **are not** by themselves a reason to reject the functioning fixed-direction IP. The notebook records them as diagnostics instead of asserting that CH1 TRI must equal zero.
+
+### 9.3 Runtime clock check and safe execution order
+
+**Preconditions:** the exact exercise-7 PS/PL bitstream must be loaded, the AXI address map confirmed in Vivado, and the board must be responsive. An unmapped or unresponsive AXI slave can leave a process or Linux stuck in a hardware MMIO access; a Python timeout does not safely interrupt that transaction.
+
+1. Program `design_1_wrapper.bit` and use the matching `design_1_wrapper.ltx` for hardware debug. Reprogram if a board reboot loaded a different design.
+2. Open `notebooks/register_test.ipynb` on PYNQ. Verify the prerequisites and explicitly set `HARDWARE_READY = True` **only after checking the actual device**.
+3. Confirm `Clocks.fclk0_mhz` and set it to **50.0** before accessing the AXI GPIO. After a restart it was observed at 100 MHz. In one diagnostic, PYNQ and the SLCR clock register were consistent with 50 MHz while Linux debugfs still printed 100 MHz; treat this discrepancy as a diagnostic note, not conclusive proof of stale cache.
+4. Run each cell in order: MMIO mapping, diagnostic TRI reads, command helper definitions, parallel test, SIPO test, output selection, final summary.
+5. **Stop at any unexpected behavior**, especially an MMIO hang. Do not loop or retry the access.
+
+The notebook **does not** load a bitstream and is **not** a hardware discovery mechanism. The readiness flag is an operator acknowledgment, not an automated proof that the PL slave exists.
+
+### 9.4 Parallel register — hardware result
+
+CH1 writes `0x00A -> 0x04A -> 0x00A` (prepare data, assert LOAD, release LOAD). CH2 then reads the output with `mode=0`.
+
+```text
+PARALLEL REGISTER
+Expected: 0xA (1010)
+Actual:   0xA (1010)
+Result:   PASS
+```
+
+### 9.5 SIPO shift register — hardware result
+
+Inject the sequence `1, 0, 1, 1`, asserting and releasing SHIFT for each bit. Four shifts replace all four prior stored bits, so the **final `0xB` is deterministic even without a software reset**. Intermediate values may reflect the register's prior contents.
+
+```text
+SIPO SHIFT REGISTER
+Bit injected: 1 -> Register: 0111
+Bit injected: 0 -> Register: 1110
+Bit injected: 1 -> Register: 1101
+Bit injected: 1 -> Register: 1011
+Expected: 0xB
+Actual:   0xB
+Result:   PASS
+```
+
+The first hardware test after a fresh state previously produced `0001, 0010, 0101, 1011`; both sequences are consistent with the RTL's shift operation and the documented lack of a software reset.
+
+### 9.6 Output selection — hardware result
+
+```text
+Parallel selected: 0xA (1010)
+SIPO selected:     0xB (1011)
+Selection result:  PASS
+Overall functional result: PASS
+Software reset: NOT TESTED (not connected in this design)
+```
+
+The test above confirms *independent storage* and mode-controlled observation through CH2 in the validated configuration.
+
+### 9.7 Vivado ILA captures — read and write handshakes
+
+![System ILA and reset ILA detected on Zynq](assets/hardware_ila_detected.png)
+*Figure 6 — `hw_ila_1` and `hw_ila_2` recognized after programming the exercise-7 bitstream. The two probes instrument reset and AXI respectively.*
+
+![AXI GPIO read transaction observed through System ILA](assets/hardware_axi_read.png)
+*Figure 7 — System ILA capture of a successful read (AR and R channels); the direction register read returned `0xFFFFFFFF`.*
+
+![AXI GPIO write handshake around the trigger](assets/hardware_axi_write_handshake.png)
+*Figure 8 — Zoom around the captured write. WDATA `0x00000000`, WSTRB `0xF`, write handshake and B response with `BRESP=OKAY` were observed.*
+
+In particular, the observed write included `WVALID && WREADY` followed by `BVALID && BREADY`, with an `OKAY` write response. The standalone Python write returned normally. The captures demonstrate **successful transactions**, not the cause of an earlier failure.
+
+### 9.8 Diagnosis history and known limitations
+
+- Earlier PS-to-PL MMIO reads and later combined read/write operations coincided with Jupyter/SSH/network unresponsiveness; some cases required physically rebooting the board.
+- One intervention tied `proc_sys_reset.dcm_locked` high. A native ILA then observed AXI active-low resets (`peripheral_aresetn`, `interconnect_aresetn`) at `1` in its capture window. This alone does not directly sample the register's active-high `peripheral_reset`.
+- FCLK0 was found at 100 MHz at boot, while the PS/PL design and debug hub were prepared for 50 MHz. Changing it to 50 MHz aligned the observed runtime configuration to the intended design.
+- The two changes were **not isolated** in an A/B experiment, and a later system-access failure still occurred during diagnosis. **Do not claim a definitive MMIO hang root cause or permanent fix.**
+- JTAG-programmed PL configuration and runtime clock setup may need to be restored after a board reboot.
+- `register_command_adapter/reset_out` remains unconnected to `register_system/reset`. Adding software-reset support requires an intentional RTL/Block Design change and new bitstream.
+- Timing figures in Section 6 are from the **separate standalone RTL implementation**, not from the fully integrated PS/PL bitstream. The latter also passed implementation timing analysis during debugging, but no complete new timing report is reproduced here.
+
+For investigation history and evidence beyond the selected figures in this README, see [GitHub issue #1](https://github.com/dexterBEN/fpga_lab/issues/1).
+
+## 10. Evidence, provenance, and preservation of earlier figures
+
+- The existing Figures 1–5 and waveform links remain referenced under their **original filenames** in `assets/`. They were **not replaced or removed** by this README update.
+- The three **new** pictures included in the companion ZIP are genuine screenshots shared during the 8 November hardware debug session. No synthetic screenshots were created.
+- The 8 November notebook output provided in the conversation includes all functional PASS statuses, including SIPO and output selection. These are reproduced as text above; there was no need to invent a screenshot of the notebook summary.
+- Detailed 6 November synthesis/timing results above remain preserved as originally reported, but their scope is now explicitly called out as standalone.
+
+The accompanying ZIP is an **overlay patch**, not a full repository snapshot: it contains this revised README and only the **three new** figures. Existing assets must remain in the repository unchanged when applying it.
