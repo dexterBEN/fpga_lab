@@ -35,6 +35,9 @@ The screenshots show particular observed states, **not fixed expected values**. 
 
 The Flutter application follows **UI → BLoC → Repository**. Both BLoCs use the **same** `RegisterRepository` instance, implemented by `WebSocketRegisterRepository`. The repository owns the WebSocket transport and JSON request/response correlation.
 
+<img width="1586" height="992" alt="image" src="https://github.com/user-attachments/assets/bb706329-9826-494b-8068-c7d7922f651e" />
+
+
 ```text
 +----------------------------------------------------------------------+
 |                        Flutter Web application                       |
