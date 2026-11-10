@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../models/register_value.dart';
 import 'circuit_primitives.dart';
+import 'confirmed_shift_transition.dart';
 import 'flip_flop_widget.dart';
+import 'shift_transition_overlay.dart';
 
 /// Q0 is the first stage from the left, matching stored(2 downto 0) & serial_in.
 /// D pin values show the wiring from confirmed Q values, never a simulated shift.
@@ -12,32 +14,45 @@ class ShiftRegisterWidget extends StatelessWidget {
     required this.serialInput,
     this.stale = false,
     this.clockMhz,
+    this.transition,
+    this.animationProgress = 0,
     super.key,
-  }) : assert(serialInput == 0 || serialInput == 1);
+  }) : assert(serialInput == 0 || serialInput == 1),
+       assert(animationProgress >= 0 && animationProgress <= 1);
 
   final RegisterValue? value;
   final int serialInput;
   final bool stale;
   final double? clockMhz;
+  final ConfirmedShiftTransition? transition;
+  final double animationProgress;
 
   @override
   Widget build(BuildContext context) {
+    // Keep all old Q bits visible during replay; the owner removes the transition
+    // at completion so every Q bit switches to the confirmed value together.
+    final replay = stale ? null : transition;
+    final displayedValue = replay?.before ?? value;
+    final displayedSerialInput = replay?.serialInput ?? serialInput;
     const top = 72.0;
     const busY = 224.0;
     const pinY = top + FlipFlopWidget.dataPinY;
     final wires = <CircuitWire>[
       CircuitWire(
         label: 'Serial input to FF0.D',
-        bit: serialInput,
+        bit: displayedSerialInput,
         points: const [Offset(46, pinY), Offset(88, pinY)],
       ),
     ];
+    final dataPaths = <CircuitWire>[wires.first];
     final stages = <Widget>[];
     final clockXs = <double>[];
     for (var bitIndex = 0; bitIndex < 4; bitIndex++) {
       final x = 88.0 + bitIndex * 156;
-      final output = value?.q0ToQ3[bitIndex];
-      final input = bitIndex == 0 ? serialInput : value?.q0ToQ3[bitIndex - 1];
+      final output = displayedValue?.q0ToQ3[bitIndex];
+      final input = bitIndex == 0
+          ? displayedSerialInput
+          : displayedValue?.q0ToQ3[bitIndex - 1];
       clockXs.add(x + FlipFlopWidget.clockPinX);
       wires.add(
         CircuitWire(
@@ -51,6 +66,7 @@ class ShiftRegisterWidget extends StatelessWidget {
           ],
         ),
       );
+      dataPaths.add(wires.last);
       wires.add(
         CircuitWire(
           label: 'FF$bitIndex.Q to Q$bitIndex',
@@ -87,11 +103,16 @@ class ShiftRegisterWidget extends StatelessWidget {
     wires.addAll(sharedClockWires(clockXs, busY, top + FlipFlopWidget.height));
     return RegisterCircuitFrame(
       register: 'shift',
-      value: value,
+      value: displayedValue,
       stale: stale,
       diagramWidth: 744,
-      caption:
-          'Serial in → Q0 → Q1 → Q2 → Q3 → discarded. SHIFT = 1 advances on CLK ↑; the summary reads Q3…Q0.',
+      caption: replay == null
+          ? 'Serial in → Q0 → Q1 → Q2 → Q3 → discarded. SHIFT = 1 advances on CLK ↑; the summary reads Q3…Q0.'
+          : 'Confirmed SHIFT · pedagogical replay, not 50 MHz timing. All four Q bits update together at the end.',
+      valueCaption: replay == null
+          ? 'Q[3:0] · confirmed'
+          : 'Previous confirmed Q[3:0]',
+      stateLabel: replay == null ? null : 'Replaying confirmed SHIFT',
       diagram: CircuitDiagram(
         width: 744,
         height: 266,
@@ -115,10 +136,10 @@ class ShiftRegisterWidget extends StatelessWidget {
             height: 40,
             child: Center(
               child: Text(
-                '$serialInput',
+                '$displayedSerialInput',
                 key: const Key('shift_serial_bit'),
                 style: TextStyle(
-                  color: CircuitColors.bit(serialInput),
+                  color: CircuitColors.bit(displayedSerialInput),
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),
@@ -143,6 +164,15 @@ class ShiftRegisterWidget extends StatelessWidget {
               style: const TextStyle(color: CircuitColors.clock, fontSize: 12),
             ),
           ),
+          if (replay != null)
+            Positioned.fill(
+              child: ShiftTransitionOverlay(
+                key: const Key('shift_transition_overlay'),
+                progress: animationProgress,
+                dataPaths: dataPaths,
+                clockPaths: wires.where((wire) => wire.clock).toList(),
+              ),
+            ),
         ],
       ),
     );

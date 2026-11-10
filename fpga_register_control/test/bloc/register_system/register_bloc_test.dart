@@ -67,7 +67,11 @@ void main() {
     act: (bloc) => bloc.add(const RegisterStateRequested()),
     expect: () => [
       const RegisterState(status: RegisterStatus.loading),
-      RegisterState(status: RegisterStatus.ready, snapshot: initialSnapshot),
+      RegisterState(
+        status: RegisterStatus.ready,
+        snapshot: initialSnapshot,
+        completedOperation: const RegisterStateRequested(),
+      ),
     ],
     verify: (bloc) {
       verify(() => repository.getState()).called(1);
@@ -88,7 +92,11 @@ void main() {
     act: (bloc) => bloc.add(const ParallelLoadRequested(10)),
     expect: () => [
       RegisterState(status: RegisterStatus.loading, snapshot: initialSnapshot),
-      RegisterState(status: RegisterStatus.ready, snapshot: updatedSnapshot),
+      RegisterState(
+        status: RegisterStatus.ready,
+        snapshot: updatedSnapshot,
+        completedOperation: const ParallelLoadRequested(10),
+      ),
     ],
     verify: (bloc) {
       verify(() => repository.loadParallel(10)).called(1);
@@ -109,7 +117,11 @@ void main() {
     act: (bloc) => bloc.add(const ShiftRequested(1)),
     expect: () => [
       RegisterState(status: RegisterStatus.loading, snapshot: initialSnapshot),
-      RegisterState(status: RegisterStatus.ready, snapshot: updatedSnapshot),
+      RegisterState(
+        status: RegisterStatus.ready,
+        snapshot: updatedSnapshot,
+        completedOperation: const ShiftRequested(1),
+      ),
     ],
     verify: (_) {
       verify(() => repository.shiftBit(1)).called(1);
@@ -127,7 +139,11 @@ void main() {
     act: (bloc) => bloc.add(const RegisterModeChanged(RegisterMode.shift)),
     expect: () => [
       const RegisterState(status: RegisterStatus.loading),
-      RegisterState(status: RegisterStatus.ready, snapshot: updatedSnapshot),
+      RegisterState(
+        status: RegisterStatus.ready,
+        snapshot: updatedSnapshot,
+        completedOperation: const RegisterModeChanged(RegisterMode.shift),
+      ),
     ],
     verify: (_) {
       verify(() => repository.selectMode(RegisterMode.shift)).called(1);
@@ -172,7 +188,11 @@ void main() {
       ..add(const ShiftRequested(1)),
     expect: () => [
       const RegisterState(status: RegisterStatus.loading),
-      RegisterState(status: RegisterStatus.ready, snapshot: initialSnapshot),
+      RegisterState(
+        status: RegisterStatus.ready,
+        snapshot: initialSnapshot,
+        completedOperation: const RegisterStateRequested(),
+      ),
       RegisterState(status: RegisterStatus.loading, snapshot: initialSnapshot),
       RegisterState(
         status: RegisterStatus.failure,
@@ -180,7 +200,11 @@ void main() {
         errorMessage: 'RegisterServerException: Load rejected',
       ),
       RegisterState(status: RegisterStatus.loading, snapshot: initialSnapshot),
-      RegisterState(status: RegisterStatus.ready, snapshot: updatedSnapshot),
+      RegisterState(
+        status: RegisterStatus.ready,
+        snapshot: updatedSnapshot,
+        completedOperation: const ShiftRequested(1),
+      ),
     ],
     verify: (_) {
       verifyInOrder([
@@ -207,7 +231,11 @@ void main() {
     act: (bloc) => bloc.add(const RegisterStateRequested()),
     expect: () => [
       RegisterState(status: RegisterStatus.loading, snapshot: initialSnapshot),
-      RegisterState(status: RegisterStatus.ready, snapshot: updatedSnapshot),
+      RegisterState(
+        status: RegisterStatus.ready,
+        snapshot: updatedSnapshot,
+        completedOperation: const RegisterStateRequested(),
+      ),
     ],
   );
 
@@ -284,7 +312,17 @@ void main() {
             status: RegisterStatus.loading,
             snapshot: index == 0 ? null : results[index - 1],
           ),
-          RegisterState(status: RegisterStatus.ready, snapshot: results[index]),
+          RegisterState(
+            status: RegisterStatus.ready,
+            snapshot: results[index],
+            completedOperation: const <RegisterEvent>[
+              RegisterStateRequested(),
+              ParallelLoadRequested(10),
+              ShiftRequested(1),
+              RegisterModeChanged(RegisterMode.shift),
+              ShiftRequested(1),
+            ][index],
+          ),
         ],
       ]);
       verifyNever(() => repository.connect());
@@ -443,6 +481,49 @@ void main() {
     expect(
       const RegisterModeChanged(RegisterMode.shift),
       isNot(const RegisterModeChanged(RegisterMode.parallel)),
+    );
+  });
+
+  blocTest<RegisterBloc, RegisterState>(
+    'identifies a successful SHIFT even when returned bits and history are unchanged',
+    setUp: () {
+      when(
+        () => repository.shiftBit(0),
+      ).thenAnswer((_) async => initialSnapshot);
+    },
+    build: () => RegisterBloc(repository),
+    seed: () =>
+        RegisterState(status: RegisterStatus.ready, snapshot: initialSnapshot),
+    act: (bloc) => bloc.add(const ShiftRequested(0)),
+    expect: () => [
+      RegisterState(status: RegisterStatus.loading, snapshot: initialSnapshot),
+      RegisterState(
+        status: RegisterStatus.ready,
+        snapshot: initialSnapshot,
+        completedOperation: const ShiftRequested(0),
+      ),
+    ],
+  );
+
+  test('state equality includes the successful operation metadata', () {
+    final read = RegisterState(
+      status: RegisterStatus.ready,
+      snapshot: initialSnapshot,
+      completedOperation: const RegisterStateRequested(),
+    );
+    final shift = RegisterState(
+      status: RegisterStatus.ready,
+      snapshot: initialSnapshot,
+      completedOperation: const ShiftRequested(1),
+    );
+    expect(read, isNot(shift));
+    expect(
+      shift,
+      RegisterState(
+        status: RegisterStatus.ready,
+        snapshot: initialSnapshot,
+        completedOperation: const ShiftRequested(1),
+      ),
     );
   });
 

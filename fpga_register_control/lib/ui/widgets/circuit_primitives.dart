@@ -201,6 +201,8 @@ class RegisterCircuitFrame extends StatelessWidget {
     required this.diagram,
     required this.diagramWidth,
     required this.caption,
+    this.valueCaption = 'Q[3:0] · confirmed',
+    this.stateLabel,
     this.stale = false,
     super.key,
   });
@@ -209,6 +211,8 @@ class RegisterCircuitFrame extends StatelessWidget {
   final Widget diagram;
   final double diagramWidth;
   final String caption;
+  final String valueCaption;
+  final String? stateLabel;
   final bool stale;
 
   @override
@@ -226,9 +230,9 @@ class RegisterCircuitFrame extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text(
-            'Q[3:0] · confirmed',
-            style: TextStyle(color: CircuitColors.text, fontSize: 13),
+          Text(
+            valueCaption,
+            style: const TextStyle(color: CircuitColors.text, fontSize: 13),
           ),
           const SizedBox(height: 8),
           Text(
@@ -248,11 +252,12 @@ class RegisterCircuitFrame extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            value == null
-                ? 'Not yet read'
-                : stale
-                ? 'Last known · stale'
-                : 'Hardware confirmed',
+            stateLabel ??
+                (value == null
+                    ? 'Not yet read'
+                    : stale
+                    ? 'Last known · stale'
+                    : 'Hardware confirmed'),
             style: TextStyle(
               color: stale || value == null
                   ? CircuitColors.unknown

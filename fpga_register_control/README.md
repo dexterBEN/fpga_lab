@@ -24,12 +24,18 @@ The screenshots show particular observed states, **not fixed expected values**. 
 - Shift a serial bit (`0` or `1`) into the SIPO register (`SHIFT`).
 - Select the multiplexed output mode (`parallel` or `shift`) and refresh the register snapshot.
 - Display the flip-flop stages, wiring, clock/load/shift labels and hardware-confirmed output bits.
+- Replay confirmed LOAD operations with all four D inputs highlighted, one shared capture pulse and simultaneous flip-flop highlights; all four Q values and their summary update together.
+- Replay confirmed SHIFT operations: serial input → Q0, old Q0 → Q1 → Q2 → Q3, and old Q3 → discarded, with a shared-clock highlight and all four new Q bits appearing together.
 - Manage connection and register operations through independent BLoCs sharing one repository.
 - Read state automatically after a successful connection or reconnection.
-- Disable register controls while disconnected or waiting for an operation; retain the last confirmed snapshot on errors and label it as stale after disconnection.
+- Disable register controls while disconnected, waiting for an operation or replaying a confirmed LOAD or SHIFT; retain the last confirmed snapshot on errors and label it as stale after disconnection.
 - Keep diagrams legible on smaller screens with horizontal circuit scrolling.
 
-> The existing circuit views are visual explanations of logic connections, not oscilloscopes or cycle-accurate timing diagrams. Any animated transitions must be based on confirmed server responses.
+> The circuit views explain logical connections, rather than real FPGA timing. PIPO capture lasts 700 ms and SIPO replay lasts 900 ms for readability. Both start only after a successful server response and do not depict a 50 MHz waveform.
+
+During a confirmed LOAD replay, D3…D0 and the four flip-flops pulse together, with no movement between stages. Q and the binary/decimal summary retain the previous sample, labelled as such, until all four outputs update to the returned hardware value. Consecutive LOAD confirmations replay in order, including loads that return unchanged values. Without a previous sample, Q stays unknown until the capture display completes.
+
+During a confirmed SHIFT replay, the diagram labels the previous confirmed value and moves the five data paths together. The four Q outputs then change together to the returned hardware value, which is never calculated from the animation. Consecutive SHIFT confirmations are replayed in order. Errors and connection interruptions cancel active and queued replays; reconnection refreshes the baseline. A different command type supersedes any pending replay so the diagrams follow the latest confirmation without overlapping operations. Reduced-motion preferences display the confirmed value directly.
 
 ## Architecture
 
@@ -149,6 +155,8 @@ Register operations use the existing repository abstraction:
 | `RegisterModeChanged(mode)` | `selectMode(mode)` |
 
 `RegisterBloc` processes all four event types in one submission-ordered queue. Each operation emits `loading`, followed by `ready` with the returned snapshot or `failure` with an error. Loading and failure retain the last successful snapshot; a new operation clears the previous error.
+
+Successful states also identify the `completedOperation`, allowing the UI to distinguish SHIFT from refresh, LOAD and mode changes even when register values stay unchanged. Animation controllers, previous presentation values and the replay queue remain in the UI layer.
 
 The immutable models are [`RegisterValue`](lib/models/register_value.dart), [`RegisterSnapshot`](lib/models/register_snapshot.dart), [`RegisterHistoryEntry`](lib/models/register_history_entry.dart) and [`RegisterMode`](lib/models/register_mode.dart). `RegisterValue` validates 0–15 and consistent binary/bit representations; `RegisterSnapshot` carries the two values, selected mode, shift counter, history and server metadata.
 
@@ -295,7 +303,7 @@ Unit and widget tests exercise BLoC states, repository commands, model parsing a
 - The server reads two register outputs sequentially through a mode multiplexer.
 - No software reset command is available in the validated hardware design.
 - WebSocket session token and plain WS transport are intended for a trusted laboratory network.
-- **Future work:** pedagogical LOAD / SHIFT / shared-clock pulse animations driven only by server-confirmed snapshots, plus further resilience and end-to-end tests. These operation animations are not implemented yet; the current flip-flop circuits are static diagrams, not real 50 MHz waveforms.
+- **Future work:** further resilience and end-to-end tests. PIPO LOAD, SIPO SHIFT and shared-clock highlights are implemented as pedagogical replays, not real 50 MHz timing diagrams.
 
 ## Related project
 

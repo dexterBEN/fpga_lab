@@ -41,7 +41,13 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
         ShiftRequested(:final bit) => _repository.shiftBit(bit),
         RegisterModeChanged(:final mode) => _repository.selectMode(mode),
       };
-      emit(RegisterState(status: RegisterStatus.ready, snapshot: snapshot));
+      emit(
+        RegisterState(
+          status: RegisterStatus.ready,
+          snapshot: snapshot,
+          completedOperation: event,
+        ),
+      );
     } catch (error) {
       emit(
         RegisterState(

@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -10,24 +12,48 @@ import '../../models/register_mode.dart';
 import '../../models/register_snapshot.dart';
 import 'connection_view.dart';
 import '../widgets/circuit_primitives.dart';
+import '../widgets/confirmed_parallel_load.dart';
+import '../widgets/confirmed_shift_transition.dart';
 import '../widgets/parallel_register_widget.dart';
 import '../widgets/shift_register_widget.dart';
 
 class RegisterSystemView extends StatefulWidget {
   const RegisterSystemView({super.key});
 
+  static const shiftAnimationDuration = Duration(milliseconds: 900);
+  static const parallelAnimationDuration = Duration(milliseconds: 700);
+
   @override
   State<RegisterSystemView> createState() => _RegisterSystemViewState();
 }
 
-class _RegisterSystemViewState extends State<RegisterSystemView> {
+class _RegisterSystemViewState extends State<RegisterSystemView>
+    with TickerProviderStateMixin {
   int _parallelInput = 0;
   int _serialInput = 0;
   bool _awaitingFreshSnapshot = true;
+  late final AnimationController _shiftAnimation;
+  final _confirmedShifts = Queue<ConfirmedShiftTransition>();
+  ConfirmedShiftTransition? _activeShift;
+  late final AnimationController _parallelAnimation;
+  final _confirmedLoads = Queue<ConfirmedParallelLoad>();
+  ConfirmedParallelLoad? _activeLoad;
+  RegisterSnapshot? _beforeOperation;
+  int _connectionGeneration = 0;
+  int? _operationConnectionGeneration;
+  bool _operationStartedFresh = false;
 
   @override
   void initState() {
     super.initState();
+    _shiftAnimation = AnimationController(
+      vsync: this,
+      duration: RegisterSystemView.shiftAnimationDuration,
+    )..addStatusListener(_onShiftAnimationStatus);
+    _parallelAnimation = AnimationController(
+      vsync: this,
+      duration: RegisterSystemView.parallelAnimationDuration,
+    )..addStatusListener(_onParallelAnimationStatus);
     // Also refresh if the view is mounted into an already connected session.
     if (context.read<WebSocketConnectionBloc>().state.status ==
         WebSocketConnectionStatus.connected) {
@@ -38,6 +64,126 @@ class _RegisterSystemViewState extends State<RegisterSystemView> {
   void _requestState() =>
       context.read<RegisterBloc>().add(const RegisterStateRequested());
 
+  void _clearShiftReplays() {
+    _shiftAnimation.stop();
+    _shiftAnimation.reset();
+    _confirmedShifts.clear();
+    _activeShift = null;
+  }
+
+  void _startNextShiftReplay() {
+    _activeShift = _confirmedShifts.removeFirst();
+    _shiftAnimation.forward(from: 0);
+  }
+
+  void _clearParallelReplays() {
+    _parallelAnimation.stop();
+    _parallelAnimation.reset();
+    _confirmedLoads.clear();
+    _activeLoad = null;
+  }
+
+  void _clearReplays() {
+    _clearShiftReplays();
+    _clearParallelReplays();
+  }
+
+  void _startNextParallelReplay() {
+    _activeLoad = _confirmedLoads.removeFirst();
+    _parallelAnimation.forward(from: 0);
+  }
+
+  void _onParallelAnimationStatus(AnimationStatus status) {
+    if (status != AnimationStatus.completed || !mounted) return;
+    setState(() {
+      _activeLoad = null;
+      if (_confirmedLoads.isNotEmpty) _startNextParallelReplay();
+    });
+  }
+
+  void _onShiftAnimationStatus(AnimationStatus status) {
+    if (status != AnimationStatus.completed || !mounted) return;
+    setState(() {
+      _activeShift = null;
+      if (_confirmedShifts.isNotEmpty) _startNextShiftReplay();
+    });
+  }
+
+  void _onRegisterState(RegisterState state) {
+    final connected =
+        context.read<WebSocketConnectionBloc>().state.status ==
+        WebSocketConnectionStatus.connected;
+    if (state.status == RegisterStatus.loading) {
+      // Capture the last server sample before this operation, even if an older
+      // confirmation is still being replayed. Never use the drawn intermediate frame.
+      _beforeOperation = state.snapshot;
+      _operationConnectionGeneration = connected ? _connectionGeneration : null;
+      _operationStartedFresh = !_awaitingFreshSnapshot;
+      return;
+    }
+    if (state.status != RegisterStatus.ready &&
+        state.status != RegisterStatus.failure) {
+      return;
+    }
+    final before = _beforeOperation;
+    final sameConnection =
+        connected && _operationConnectionGeneration == _connectionGeneration;
+    final wasFresh = _operationStartedFresh;
+    _beforeOperation = null;
+    _operationConnectionGeneration = null;
+    _operationStartedFresh = false;
+    final operation = state.completedOperation;
+    final snapshot = state.snapshot;
+    setState(() {
+      if (state.status == RegisterStatus.failure || !sameConnection) {
+        _clearReplays();
+        return;
+      }
+      _awaitingFreshSnapshot = false;
+      final animationsEnabled =
+          !(MediaQuery.maybeOf(context)?.disableAnimations ?? false);
+      if (operation is ParallelLoadRequested &&
+          snapshot != null &&
+          animationsEnabled) {
+        _clearShiftReplays();
+        _confirmedLoads.add(
+          ConfirmedParallelLoad(
+            before: before?.parallel,
+            after: snapshot.parallel,
+            inputValue: operation.value,
+          ),
+        );
+        if (_activeLoad == null) _startNextParallelReplay();
+        return;
+      }
+      _clearParallelReplays();
+      if (operation is ShiftRequested &&
+          before != null &&
+          snapshot != null &&
+          wasFresh &&
+          animationsEnabled) {
+        _confirmedShifts.add(
+          ConfirmedShiftTransition(
+            before: before.shift,
+            after: snapshot.shift,
+            serialInput: operation.bit,
+          ),
+        );
+        if (_activeShift == null) _startNextShiftReplay();
+      } else {
+        // Refresh, LOAD and mode replies must never masquerade as SHIFT.
+        _clearShiftReplays();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _shiftAnimation.dispose();
+    _parallelAnimation.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocListener(
@@ -45,20 +191,21 @@ class _RegisterSystemViewState extends State<RegisterSystemView> {
         BlocListener<WebSocketConnectionBloc, WebSocketConnectionState>(
           listenWhen: (previous, current) => previous.status != current.status,
           listener: (context, state) {
-            setState(() => _awaitingFreshSnapshot = true);
+            setState(() {
+              _connectionGeneration++;
+              _operationConnectionGeneration = null;
+              _beforeOperation = null;
+              _operationStartedFresh = false;
+              _awaitingFreshSnapshot = true;
+              _clearReplays();
+            });
             if (state.status == WebSocketConnectionStatus.connected) {
               _requestState();
             }
           },
         ),
         BlocListener<RegisterBloc, RegisterState>(
-          listener: (context, state) {
-            if (state.status == RegisterStatus.ready &&
-                context.read<WebSocketConnectionBloc>().state.status ==
-                    WebSocketConnectionStatus.connected) {
-              setState(() => _awaitingFreshSnapshot = false);
-            }
-          },
+          listener: (context, state) => _onRegisterState(state),
         ),
       ],
       child: Scaffold(
@@ -71,7 +218,11 @@ class _RegisterSystemViewState extends State<RegisterSystemView> {
                     connectionState.status ==
                     WebSocketConnectionStatus.connected;
                 final loading = state.status == RegisterStatus.loading;
-                final enabled = connected && !loading;
+                final enabled =
+                    connected &&
+                    !loading &&
+                    _activeShift == null &&
+                    _activeLoad == null;
                 final snapshot = state.snapshot;
                 final stale =
                     snapshot != null && (!connected || _awaitingFreshSnapshot);
@@ -168,11 +319,16 @@ class _RegisterSystemViewState extends State<RegisterSystemView> {
         description:
             'Four bits captured together through independent D inputs.',
         icon: Icons.layers_outlined,
-        circuit: ParallelRegisterWidget(
-          value: snapshot?.parallel,
-          inputValue: _parallelInput,
-          stale: stale,
-          clockMhz: snapshot?.fclk0Mhz,
+        circuit: AnimatedBuilder(
+          animation: _parallelAnimation,
+          builder: (context, _) => ParallelRegisterWidget(
+            value: _activeLoad?.after ?? snapshot?.parallel,
+            inputValue: _parallelInput,
+            stale: stale,
+            clockMhz: snapshot?.fclk0Mhz,
+            transition: _activeLoad,
+            animationProgress: _parallelAnimation.value,
+          ),
         ),
         controls: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -228,11 +384,16 @@ class _RegisterSystemViewState extends State<RegisterSystemView> {
     description:
         'Serial input enters Q0. Each enabled edge advances bits toward Q3.',
     icon: Icons.arrow_forward,
-    circuit: ShiftRegisterWidget(
-      value: snapshot?.shift,
-      serialInput: _serialInput,
-      stale: stale,
-      clockMhz: snapshot?.fclk0Mhz,
+    circuit: AnimatedBuilder(
+      animation: _shiftAnimation,
+      builder: (context, _) => ShiftRegisterWidget(
+        value: _activeShift?.after ?? snapshot?.shift,
+        serialInput: _serialInput,
+        stale: stale,
+        clockMhz: snapshot?.fclk0Mhz,
+        transition: _activeShift,
+        animationProgress: _shiftAnimation.value,
+      ),
     ),
     controls: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
