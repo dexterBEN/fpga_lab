@@ -1,0 +1,85 @@
+{
+  "extensionVersion": "1.6.1",
+  "fileName": "/workspaces/fpga_lab/exo_8_ALU/alu.ghw",
+  "markerTime": null,
+  "altMarkerTime": null,
+  "displayTimeUnit": "fs",
+  "selectedSignal": {
+    "name": "arithmetic_logic_unit_tb.dut.result",
+    "msb": 3,
+    "lsb": 0
+  },
+  "zoomRatio": 0.0000062706766917293235,
+  "scrollLeft": 0,
+  "defaultPixelTime": 100000000,
+  "displayedSignals": [
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 4,
+      "name": "a",
+      "scopePath": [
+        "arithmetic_logic_unit_tb",
+        "dut"
+      ],
+      "numberFormat": "hexadecimal",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "a",
+      "renderType": "multiBit",
+      "valueLinkEnable": false
+    },
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 5,
+      "name": "b",
+      "scopePath": [
+        "arithmetic_logic_unit_tb",
+        "dut"
+      ],
+      "numberFormat": "hexadecimal",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "b",
+      "renderType": "multiBit",
+      "valueLinkEnable": false
+    },
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 6,
+      "name": "op",
+      "scopePath": [
+        "arithmetic_logic_unit_tb",
+        "dut"
+      ],
+      "numberFormat": "hexadecimal",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "op",
+      "renderType": "multiBit",
+      "valueLinkEnable": false
+    },
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 7,
+      "name": "result",
+      "scopePath": [
+        "arithmetic_logic_unit_tb",
+        "dut"
+      ],
+      "numberFormat": "hexadecimal",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "result",
+      "renderType": "multiBit",
+      "valueLinkEnable": false
+    }
+  ]
+}
