@@ -277,9 +277,7 @@ The **most critical setup path** no longer passed through the ALU: it belonged t
 
 ### 9.1 Loading the Hardware
 
-The `exo_8_ALU.runs/impl_1/design_1_wrapper.bit` file was **programmed through Vivado Hardware Manager over JTAG**. This differs from loading it through `pynq.Overlay(bitfile)` on Linux: programming over JTAG does not copy `.bit` or `.hwh` files into `/home/xilinx/overlay`.
-
-The notebook was **edited in VS Code (Dev Container)** but connected to a **remote Jupyter server on the PYNQ-Z2**. The initial confusion over paths returning `Path('/home/xilinx/overlay/...').exists() == False` mainly arose because these files had not been copied onto Linux; it did not imply that the Python kernel was local.
+The notebook is connected to a **remote Jupyter server on the PYNQ-Z2**.
 
 ### 9.2 System Checks Before MMIO
 
