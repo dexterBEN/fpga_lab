@@ -1,9 +1,8 @@
-# Exercise 8 — 8-bit ALU on PYNQ-Z2: Technical Report
-
-> **Project:** `fpga_lab/exo_8_ALU`  
+# Exercise 8 — 8-bit ALU
+ 
 > **Platform:** PYNQ-Z2, Zynq-7020 (`xc7z020clg400-1`)  
 > **Tools:** VHDL 2008, GHDL, waveform viewer, Vivado 2024.1, PYNQ/Python, VS Code + remote Jupyter   
-> **Scope:** The development process and results discussed in the conversation; this document is not an exhaustive test report automatically produced by a laboratory.
+
 
 ## 1. Objective and Development Approach
 
@@ -81,7 +80,7 @@ Representative 8-bit examples:
 
 The **zero flag** is determined from the result truncated to the data width. Computing `overflow` requires **signed** reasoning: for example, adding two positive operands and obtaining a negative sign bit indicates overflow.
 
-**GHDL validation reported in the conversation:** Exhaustive ADD/SUB tests (533 cases at 4 bits and 131,093 cases at 8 bits), all passing according to the reported output. Screenshots `01` and `02` illustrate the corresponding waveforms; the test counts come from the execution results discussed in the conversation.
+**GHDL validation reported:** Exhaustive ADD/SUB tests (533 cases at 4 bits and 131,093 cases at 8 bits), all passing according to the reported output. Screenshots `01` and `02` illustrate the corresponding waveforms; the test counts come from the execution.
 
 ![ALU waveform](assets/01_alu_waveform.png)
 
@@ -229,7 +228,7 @@ The `axi_gpio_0` parameters were explicitly checked in the Vivado console: `C_GP
 
 ![Block Design](assets/07_block_design_vivado.png)
 
-*Figure 4 — Vivado Block Design shared in the conversation, showing PS7, AXI, GPIO, slice/concat, and controller connections.*
+*Figure 4 — Vivado Block Design showing PS7, AXI, GPIO, slice/concat, and controller connections.*
 
 ### A Useful Detour: The Top-Level Module and Constraints
 
@@ -390,7 +389,9 @@ These cases clearly distinguish `carry` (unsigned overflow) from `overflow` (sig
 
 ## 11. Notebook: Recommended Structure After Cleanup
 
-The initial notebook contained one-off diagnostic cells and duplicate MMIO initialization. A cleaned-up version, `alu_simulation_bench_clean.ipynb`, was prepared during the conversation, with English comments and the following organization:
+The initial notebook contained one-off diagnostic cells and duplicate MMIO initialization. 
+
+A cleaned-up version, `alu_simulation_bench_clean.ipynb`, was prepared, with comments and the following organization:
 
 ```text
 1. Hardware setup / assumptions
@@ -441,8 +442,6 @@ A **Python timeout** protects the polling loop if each MMIO access returns, but 
 | [`06_controller_implemented_schematic.png`](assets/06_controller_implemented_schematic.png) | Earlier standalone implementation | Explain the transition to the PS–PL architecture |
 | [`07_block_design_vivado.png`](assets/07_block_design_vivado.png) | Final Block Design | Provide an essential overview of the hardware architecture |
 | [`08_hardware_addition_success.png`](assets/08_hardware_addition_success.png) | Notebook / actual result | Provide visual evidence of an operation on the PYNQ-Z2 |
-
-> **Traceability note:** The screenshots come from images shared in the conversation. The filenames are descriptive, and the index summarizes their purpose; several schematic views are shown at a low zoom level. Numerical measurements and test results are reproduced from the Vivado/GHDL/Python output communicated during the discussion and are not inferred from screenshot pixels.
 
 ## 15. Conclusion
 
