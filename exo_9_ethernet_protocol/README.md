@@ -83,7 +83,8 @@ The parser also receives the buffer's `frame_ready`, `frame_size`, and `overflow
 
 ### Vivado integration
 
-![Vivado block design, showing the AXI GPIOs, PS, bridge, buffer and parser](assets/vivado_block_design.png)
+<img width="2451" height="1298" alt="image" src="https://github.com/user-attachments/assets/686e956e-14b9-4a58-9c4a-e8b4b4827e1d" />
+
 
 *Selected view of the implemented Vivado block design.*
 
