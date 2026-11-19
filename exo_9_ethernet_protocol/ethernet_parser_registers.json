@@ -1,0 +1,193 @@
+{
+  "extensionVersion": "1.6.1",
+  "fileName": "/workspaces/fpga_lab/exo_9_ethernet_protocol/ethernet_parser_registers.vcd",
+  "markerTime": null,
+  "altMarkerTime": null,
+  "displayTimeUnit": "fs",
+  "selectedSignal": {
+    "name": "ethernet_parser_registers_tb.dst_high",
+    "msb": 31,
+    "lsb": 0
+  },
+  "zoomRatio": 0.00003852316731770833,
+  "scrollLeft": 0,
+  "defaultPixelTime": 10000000,
+  "displayedSignals": [
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 1,
+      "name": "src_mac",
+      "scopePath": [
+        "ethernet_parser_registers_tb"
+      ],
+      "numberFormat": "hexadecimal",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "src_mac",
+      "renderType": "multiBit",
+      "valueLinkEnable": false
+    },
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 9,
+      "name": "src_low",
+      "scopePath": [
+        "ethernet_parser_registers_tb"
+      ],
+      "numberFormat": "hexadecimal",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "src_low",
+      "renderType": "multiBit",
+      "valueLinkEnable": false
+    },
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 10,
+      "name": "src_high",
+      "scopePath": [
+        "ethernet_parser_registers_tb"
+      ],
+      "numberFormat": "hexadecimal",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "src_high",
+      "renderType": "multiBit",
+      "valueLinkEnable": false
+    },
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 5,
+      "name": "is_ipv4",
+      "scopePath": [
+        "ethernet_parser_registers_tb"
+      ],
+      "numberFormat": "binary",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "is_ipv4",
+      "renderType": "binary",
+      "valueLinkEnable": false
+    },
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 6,
+      "name": "is_arp",
+      "scopePath": [
+        "ethernet_parser_registers_tb"
+      ],
+      "numberFormat": "binary",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "is_arp",
+      "renderType": "binary",
+      "valueLinkEnable": false
+    },
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 4,
+      "name": "header_valid",
+      "scopePath": [
+        "ethernet_parser_registers_tb"
+      ],
+      "numberFormat": "binary",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "header_valid",
+      "renderType": "binary",
+      "valueLinkEnable": false
+    },
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 3,
+      "name": "header_done",
+      "scopePath": [
+        "ethernet_parser_registers_tb"
+      ],
+      "numberFormat": "binary",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "header_done",
+      "renderType": "binary",
+      "valueLinkEnable": false
+    },
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 2,
+      "name": "ether_type",
+      "scopePath": [
+        "ethernet_parser_registers_tb"
+      ],
+      "numberFormat": "hexadecimal",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "ether_type",
+      "renderType": "multiBit",
+      "valueLinkEnable": false
+    },
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 0,
+      "name": "dst_mac",
+      "scopePath": [
+        "ethernet_parser_registers_tb"
+      ],
+      "numberFormat": "hexadecimal",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "dst_mac",
+      "renderType": "multiBit",
+      "valueLinkEnable": false
+    },
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 7,
+      "name": "dst_low",
+      "scopePath": [
+        "ethernet_parser_registers_tb"
+      ],
+      "numberFormat": "hexadecimal",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "dst_low",
+      "renderType": "multiBit",
+      "valueLinkEnable": false
+    },
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 8,
+      "name": "dst_high",
+      "scopePath": [
+        "ethernet_parser_registers_tb"
+      ],
+      "numberFormat": "hexadecimal",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "dst_high",
+      "renderType": "multiBit",
+      "valueLinkEnable": false
+    }
+  ]
+}
