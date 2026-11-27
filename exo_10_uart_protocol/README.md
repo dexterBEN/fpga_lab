@@ -49,7 +49,7 @@ The RX validates the start bit near its midpoint, then samples subsequent bits n
 - FSM: `IDLE → START → DATA → STOP → IDLE`.
 - Latches data at acceptance, serializes LSB first, ignores new requests while busy and emits a completion event at the end of the stop bit.
 
-![TX robustness simulation](screenshots/uart_tx_simulation.png)
+![TX robustness simulation](assets/uart_tx_simulation.png)
 
 *Original VaporView capture: TX input changes, latched data, busy, bit counter and completion signals.*
 
@@ -61,7 +61,7 @@ The RX validates the start bit near its midpoint, then samples subsequent bits n
 - Rejects false starts, checks the stop bit, reports framing errors and waits for idle after an invalid frame.
 - Preserves the previous valid output when a frame is rejected.
 
-![RX robustness simulation](screenshots/uart_rx_simulation.png)
+![RX robustness simulation](assets/uart_rx_simulation.png)
 
 *Original VaporView capture: serial input, receive data, framing error, completion and recovery behavior.*
 
@@ -114,7 +114,7 @@ Vivado IP Integrator connects `processing_system7_0`, `ps7_0_axi_periph`, two si
 | `axi_gpio_0` | `0x41200000` | 64 KiB | `0x00` | PS → PL |
 | `axi_gpio_1` | `0x41210000` | 64 KiB | `0x00` | PL → PS |
 
-![Vivado address assignment](screenshots/vivado_address_map.png)
+![Vivado address assignment](assets/vivado_address_map.png)
 
 ### COMMAND register
 
