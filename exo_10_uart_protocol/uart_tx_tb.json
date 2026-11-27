@@ -1,0 +1,180 @@
+{
+  "extensionVersion": "1.6.1",
+  "fileName": "/workspaces/fpga_lab/exo_10_uart_protocol/uart_tx_tb.vcd",
+  "markerTime": 137217877100,
+  "altMarkerTime": null,
+  "displayTimeUnit": "fs",
+  "selectedSignal": {
+    "name": "uart_tx_tb.dut.data_reg",
+    "msb": 7,
+    "lsb": 0
+  },
+  "zoomRatio": 1.559563553404309e-8,
+  "scrollLeft": 258213266860,
+  "defaultPixelTime": 10000000,
+  "displayedSignals": [
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 3,
+      "name": "tx_start",
+      "scopePath": [
+        "uart_tx_tb"
+      ],
+      "numberFormat": "binary",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "tx_start",
+      "renderType": "binary",
+      "valueLinkEnable": false
+    },
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 4,
+      "name": "tx_out",
+      "scopePath": [
+        "uart_tx_tb"
+      ],
+      "numberFormat": "binary",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "tx_out",
+      "renderType": "binary",
+      "valueLinkEnable": false
+    },
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 5,
+      "name": "tx_busy",
+      "scopePath": [
+        "uart_tx_tb"
+      ],
+      "numberFormat": "binary",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "tx_busy",
+      "renderType": "binary",
+      "valueLinkEnable": false
+    },
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 1,
+      "name": "reset",
+      "scopePath": [
+        "uart_tx_tb"
+      ],
+      "numberFormat": "binary",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "reset",
+      "renderType": "binary",
+      "valueLinkEnable": false
+    },
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 6,
+      "name": "done",
+      "scopePath": [
+        "uart_tx_tb"
+      ],
+      "numberFormat": "binary",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "done",
+      "renderType": "binary",
+      "valueLinkEnable": false
+    },
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 2,
+      "name": "data_in",
+      "scopePath": [
+        "uart_tx_tb"
+      ],
+      "numberFormat": "hexadecimal",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "data_in",
+      "renderType": "multiBit",
+      "valueLinkEnable": false
+    },
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 0,
+      "name": "clk",
+      "scopePath": [
+        "uart_tx_tb"
+      ],
+      "numberFormat": "binary",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "clk",
+      "renderType": "binary",
+      "valueLinkEnable": false
+    },
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 15,
+      "name": "bit_index",
+      "scopePath": [
+        "uart_tx_tb",
+        "dut"
+      ],
+      "numberFormat": "hexadecimal",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "bit_index",
+      "renderType": "multiBit",
+      "valueLinkEnable": false
+    },
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 14,
+      "name": "baud_counter",
+      "scopePath": [
+        "uart_tx_tb",
+        "dut"
+      ],
+      "numberFormat": "hexadecimal",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "baud_counter",
+      "renderType": "multiBit",
+      "valueLinkEnable": false
+    },
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 16,
+      "name": "data_reg",
+      "scopePath": [
+        "uart_tx_tb",
+        "dut"
+      ],
+      "numberFormat": "hexadecimal",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "data_reg",
+      "renderType": "multiBit",
+      "valueLinkEnable": false
+    }
+  ]
+}

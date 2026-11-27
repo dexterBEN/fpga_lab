@@ -1,0 +1,296 @@
+{
+  "extensionVersion": "1.6.1",
+  "fileName": "/workspaces/fpga_lab/exo_10_uart_protocol/uart_rx_robustness_tb.vcd",
+  "markerTime": null,
+  "altMarkerTime": null,
+  "displayTimeUnit": "fs",
+  "selectedSignal": {
+    "name": "uart_rx_robustness_tb.dut.half_baud_tick",
+    "msb": -1,
+    "lsb": -1
+  },
+  "zoomRatio": 1.3132776479224324e-9,
+  "scrollLeft": 0,
+  "defaultPixelTime": 10000000,
+  "displayedSignals": [
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 2,
+      "name": "rx_in",
+      "scopePath": [
+        "uart_rx_robustness_tb"
+      ],
+      "numberFormat": "binary",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "rx_in",
+      "renderType": "binary",
+      "valueLinkEnable": false
+    },
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 4,
+      "name": "rx_busy",
+      "scopePath": [
+        "uart_rx_robustness_tb"
+      ],
+      "numberFormat": "binary",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "rx_busy",
+      "renderType": "binary",
+      "valueLinkEnable": false
+    },
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 1,
+      "name": "reset",
+      "scopePath": [
+        "uart_rx_robustness_tb"
+      ],
+      "numberFormat": "binary",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "reset",
+      "renderType": "binary",
+      "valueLinkEnable": false
+    },
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 7,
+      "name": "received_count",
+      "scopePath": [
+        "uart_rx_robustness_tb"
+      ],
+      "numberFormat": "hexadecimal",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "received_count",
+      "renderType": "multiBit",
+      "valueLinkEnable": false
+    },
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 6,
+      "name": "framing_error",
+      "scopePath": [
+        "uart_rx_robustness_tb"
+      ],
+      "numberFormat": "binary",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "framing_error",
+      "renderType": "binary",
+      "valueLinkEnable": false
+    },
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 9,
+      "name": "expected_data",
+      "scopePath": [
+        "uart_rx_robustness_tb"
+      ],
+      "numberFormat": "hexadecimal",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "expected_data",
+      "renderType": "multiBit",
+      "valueLinkEnable": false
+    },
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 8,
+      "name": "error_count",
+      "scopePath": [
+        "uart_rx_robustness_tb"
+      ],
+      "numberFormat": "hexadecimal",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "error_count",
+      "renderType": "multiBit",
+      "valueLinkEnable": false
+    },
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 5,
+      "name": "done",
+      "scopePath": [
+        "uart_rx_robustness_tb"
+      ],
+      "numberFormat": "binary",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "done",
+      "renderType": "binary",
+      "valueLinkEnable": false
+    },
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 3,
+      "name": "data_out",
+      "scopePath": [
+        "uart_rx_robustness_tb"
+      ],
+      "numberFormat": "hexadecimal",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "data_out",
+      "renderType": "multiBit",
+      "valueLinkEnable": false
+    },
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 0,
+      "name": "clk",
+      "scopePath": [
+        "uart_rx_robustness_tb"
+      ],
+      "numberFormat": "binary",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "clk",
+      "renderType": "binary",
+      "valueLinkEnable": false
+    },
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 19,
+      "name": "baud_counter",
+      "scopePath": [
+        "uart_rx_robustness_tb",
+        "dut"
+      ],
+      "numberFormat": "hexadecimal",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "baud_counter",
+      "renderType": "multiBit",
+      "valueLinkEnable": false
+    },
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 22,
+      "name": "baud_tick",
+      "scopePath": [
+        "uart_rx_robustness_tb",
+        "dut"
+      ],
+      "numberFormat": "binary",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "baud_tick",
+      "renderType": "binary",
+      "valueLinkEnable": false
+    },
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 20,
+      "name": "bit_index",
+      "scopePath": [
+        "uart_rx_robustness_tb",
+        "dut"
+      ],
+      "numberFormat": "hexadecimal",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "bit_index",
+      "renderType": "multiBit",
+      "valueLinkEnable": false
+    },
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 27,
+      "name": "complete_rx",
+      "scopePath": [
+        "uart_rx_robustness_tb",
+        "dut"
+      ],
+      "numberFormat": "binary",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "complete_rx",
+      "renderType": "binary",
+      "valueLinkEnable": false
+    },
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 13,
+      "name": "data_out",
+      "scopePath": [
+        "uart_rx_robustness_tb",
+        "dut"
+      ],
+      "numberFormat": "hexadecimal",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "data_out",
+      "renderType": "multiBit",
+      "valueLinkEnable": false
+    },
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 21,
+      "name": "data_reg",
+      "scopePath": [
+        "uart_rx_robustness_tb",
+        "dut"
+      ],
+      "numberFormat": "hexadecimal",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "data_reg",
+      "renderType": "multiBit",
+      "valueLinkEnable": false
+    },
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 23,
+      "name": "half_baud_tick",
+      "scopePath": [
+        "uart_rx_robustness_tb",
+        "dut"
+      ],
+      "numberFormat": "binary",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "nameType": "fullPath",
+      "customName": "half_baud_tick",
+      "renderType": "binary",
+      "valueLinkEnable": false
+    }
+  ]
+}

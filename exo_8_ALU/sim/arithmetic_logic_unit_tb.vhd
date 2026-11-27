@@ -290,8 +290,8 @@ begin
         end loop;
 
         report "All " & integer'image(tests_run) &
-               " ALU tests passed at " &
-               integer'image(DATA_WIDTH) & " bits."
+                " ALU tests passed at " &
+                integer'image(DATA_WIDTH) & " bits."
             severity note;
 
         wait;
