@@ -6,9 +6,13 @@
 
 ## 1. Objective
 
-Design a UART transmitter and receiver from scratch, connect them through an internal serial loopback, and expose a reliable software-controlled byte-transfer interface to the ARM processor. Validate the RTL in simulation, implement it on the FPGA and verify the physical PS/PL data path from Python.
+Design a UART transmitter and receiver from scratch, connect them through an internal serial loopback, and expose a reliable software-controlled byte-transfer interface to the ARM processor. 
 
-The exercise uses 115200 baud, 8N1 (eight data bits, no parity, one stop bit) and a 50 MHz fabric clock. It does not connect an external serial device or use the Zynq PS UART peripheral.
+Validate the RTL in simulation, implement it on the FPGA and verify the physical PS/PL data path from Python.
+
+The exercise uses 115200 baud, 8N1 (eight data bits, no parity, one stop bit) and a 50 MHz fabric clock. 
+
+It does not connect an external serial device or use the Zynq PS UART peripheral.
 
 ## 2. Concepts practiced
 
@@ -36,9 +40,15 @@ Idle       Start     Data (LSB first)                        Stop     Idle
        <---------- 10 bit periods per 8N1 frame ---------->
 ```
 
-At 50 MHz the clock period is 20 ns. The integer divider is `50_000_000 / 115_200 = 434` clock cycles per bit (integer division). The realized nominal rate is approximately 115207 baud, with a bit period of 8.68 µs. An 8N1 frame therefore takes about 86.8 µs. The ideal useful payload throughput at the requested baud rate is 11520 bytes/s, excluding gaps and software overhead.
+At 50 MHz the clock period is 20 ns. The integer divider is `50_000_000 / 115_200 = 434` clock cycles per bit (integer division). 
 
-The RX validates the start bit near its midpoint, then samples subsequent bits near their centers rather than relying on an edge for each bit. This matters because UART has no separate transmitted clock. The input synchronizer reduces metastability risk but does not eliminate it.
+The realized nominal rate is approximately 115207 baud, with a bit period of 8.68 µs. An 8N1 frame therefore takes about 86.8 µs. 
+
+The ideal useful payload throughput at the requested baud rate is 11520 bytes/s, excluding gaps and software overhead.
+
+The RX validates the start bit near its midpoint, then samples subsequent bits near their centers rather than relying on an edge for each bit. 
+
+This matters because UART has no separate transmitted clock. The input synchronizer reduces metastability risk but does not eliminate it.
 
 ## 4. RTL modules
 
@@ -101,7 +111,13 @@ The RX validates the start bit near its midpoint, then samples subsequent bits n
   +----------------------------------------------------+
 ```
 
-Vivado IP Integrator connects `processing_system7_0`, `ps7_0_axi_periph`, two single-channel 32-bit AXI GPIOs, `rst_ps7_0_50M` and the RTL bridge. GPIO 0 is all-output and GPIO 1 all-input. The bridge is driven by FCLK_CLK0 and `peripheral_aresetn`. The generated HDL top is `design_1_wrapper`.
+Vivado IP Integrator connects `processing_system7_0`, `ps7_0_axi_periph`, two single-channel 32-bit AXI GPIOs, `rst_ps7_0_50M` and the RTL bridge. 
+
+GPIO 0 is all-output and GPIO 1 all-input. 
+
+The bridge is driven by FCLK_CLK0 and `peripheral_aresetn`. 
+
+The generated HDL top is `design_1_wrapper`.
 
 ![Vivado block design](assets/vivado_block_design.png)
 
@@ -146,7 +162,9 @@ Vivado IP Integrator connects `processing_system7_0`, `ps7_0_axi_periph`, two si
 4. Poll until ACK matches REQUEST, all busy flags are clear and both completion flags are set; fail on framing error or timeout.
 5. Read RX_DATA and compare it to the transmitted byte.
 
-ACK means *accepted*, not *completed*. Keeping the same REQUEST does not trigger a second transmission. A reset must leave the command and bridge in a consistent toggle state.
+ACK means *accepted*, not *completed*. Keeping the same REQUEST does not trigger a second transmission. 
+
+A reset must leave the command and bridge in a consistent toggle state.
 
 Observed initial manual transactions, starting with ACK = 0:
 
@@ -157,7 +175,11 @@ Observed initial manual transactions, starting with ACK = 0:
 
 ## 7. RTL simulation and verification
 
-GHDL was used with VHDL-2008 and self-checking testbenches. VCD waveforms were inspected in VaporView. The Makefile centralizes compilation, elaboration, execution and waveform generation.
+GHDL was used with VHDL-2008 and self-checking testbenches. 
+
+VCD waveforms were inspected in VaporView. 
+
+The Makefile centralizes compilation, elaboration, execution and waveform generation.
 
 ```bash
 make test
@@ -174,11 +196,21 @@ make clean
 | `uart_loopback_tb` | TC31–TC39 | Full byte range, back-to-back transfers, sequence integrity, completion counts, reset/recovery, baud mismatch |
 | `uart_gpio_bridge_tb` | TC40–TC52 | Command decoding, toggle/ACK, no repeated request, sticky flags, latching, status mapping, reset and recovery |
 
-All 52 numbered scenarios were covered by the successful simulation runs. TC39 was skipped in the nominal loopback run and exercised in the separate baud-mismatch runs. TC43 checks absence of repeated transmission rather than directly measuring the start pulse width. Bridge-level injected framing errors were not exercised.
+All 52 numbered scenarios were covered by the successful simulation runs.
+
+TC39 was skipped in the nominal loopback run and exercised in the separate baud-mismatch runs. 
+
+TC43 checks absence of repeated transmission rather than directly measuring the start pulse width.
+
+Bridge-level injected framing errors were not exercised.
 
 ## 8. Vivado synthesis, implementation and timing
 
-The bridge was first synthesized and routed as a standalone RTL design using a 20 ns clock constraint. The final integrated design uses the PS-generated fabric clock; the standalone XDC was disabled to avoid applying its clock constraint to the wrong top-level port. The module reference was added to IP Integrator with the bridge file marked VHDL (TX/RX retained VHDL-2008), then the HDL wrapper was generated and the complete design synthesized and implemented.
+The bridge was first synthesized and routed as a standalone RTL design using a 20 ns clock constraint. 
+
+The final integrated design uses the PS-generated fabric clock; the standalone XDC was disabled to avoid applying its clock constraint to the wrong top-level port. 
+
+The module reference was added to IP Integrator with the bridge file marked VHDL (TX/RX retained VHDL-2008), then the HDL wrapper was generated and the complete design synthesized and implemented.
 
 ### Resource utilization
 
@@ -190,7 +222,9 @@ The bridge was first synthesized and routed as a standalone RTL design using a 2
 | BRAM | 0 | 0 | 0 |
 | DSP | 0 | 0 | 0 |
 
-The final routed design uses 657 logic LUTs and 62 SRLs, one BUFG and no external PL bonded I/O. The PS uses its fixed I/O pins. Most logic cost comes from the AXI interconnect and GPIOs, not the UART datapath: the bridge accounts for 59 LUTs and 82 registers, versus 491 LUTs and 648 registers for the AXI interconnect.
+The final routed design uses 657 logic LUTs and 62 SRLs, one BUFG and no external PL bonded I/O. 
+
+The PS uses its fixed I/O pins. Most logic cost comes from the AXI interconnect and GPIOs, not the UART datapath: the bridge accounts for 59 LUTs and 82 registers, versus 491 LUTs and 648 registers for the AXI interconnect.
 
 ### Final routed timing (50 MHz)
 
@@ -205,24 +239,31 @@ The final routed design uses 657 logic LUTs and 62 SRLs, one BUFG and no externa
 | DRC violations | 0 |
 | Methodology violations | 0 |
 
-Timing constraints were met. The critical setup path is inside the AXI interconnect, not the UART. These are results of the routed Vivado report, not a measurement of the maximum operating frequency on hardware.
+Timing constraints were met. The critical setup path is inside the AXI interconnect, not the UART. 
+
+These are results of the routed Vivado report, not a measurement of the maximum operating frequency on hardware.
 
 ## 9. Hardware bring-up and debugging
 
-The bitstream was generated and programmed on the physical PYNQ-Z2 using Vivado. Linux/Jupyter remained responsible for software control.
+The bitstream was generated and programmed on the physical PYNQ-Z2 using Vivado. 
+
+Linux/Jupyter remained responsible for software control.
 
 Two integration issues were resolved:
 
 - **Actual fabric clock:** Python initially reported FCLK0 = 100 MHz although the design was configured for 50 MHz. Programming PL through Vivado did not apply the desired PS clock configuration. Setting `Clocks.fclk0_mhz = 50.0` and verifying it before MMIO restored the expected timing. A shared-clock loopback alone would not have detected the baud-rate error.
+
 - **Stale software status:** the second manual transfer initially failed a Python assertion because the cached status remained `0x000031A6`. A fresh MMIO read returned `0x00003055`, proving the second transfer was correct. The reusable driver now reads status locally instead of depending on notebook variables left over from another cell.
 
-A Jupyter kernel restart does not reset PL registers. The refactored notebook therefore checks readiness and derives the next toggle from hardware ACK rather than assuming an all-zero status.
+A Jupyter kernel restart does not reset PL registers. 
+
+The refactored notebook therefore checks readiness and derives the next toggle from hardware ACK rather than assuming an all-zero status.
 
 ## 10. Python notebook and parameterized tests
 
 Notebook: [`notebooks/uart_test_bench.ipynb`](https://github.com/dexterBEN/fpga_lab/blob/master/exo_10_uart_protocol/notebooks/uart_test_bench.ipynb).
 
-The notebook is self-contained: prerequisites, imports/constants, clock/MMIO setup, `read_status()`, `uart_transfer()`, readiness tests, handshake tests, parameterized cases, stress testing, performance and scope. Comments and test labels are in English.
+The notebook is self-contained: prerequisites, imports/constants, clock/MMIO setup, `read_status()`, `uart_transfer()`, readiness tests, handshake tests, parameterized cases, stress testing, performance and scope.
 
 Dependencies (verified on the board): pytest 8.4.2 and ipytest 0.14.2, Python 3.10.4.
 
@@ -241,7 +282,11 @@ def test_uart_exhaustive(data):
     assert uart_transfer(data) == data
 ```
 
-The decorator creates one independently reported case per byte, analogous to data-driven tests in MSTest. `-x` stops the current test session after the first failure. The test suite is sequential because it shares a physical bridge; the cases must not drive the same registers concurrently. These are hardware integration tests, not isolated software unit tests.
+The decorator creates one independently reported case per byte, analogous to data-driven tests in MSTest. `-x` stops the current test session after the first failure. 
+
+The test suite is sequential because it shares a physical bridge; the cases must not drive the same registers concurrently. 
+
+These are hardware integration tests, not isolated software unit tests.
 
 ### Recorded hardware results
 
@@ -253,7 +298,11 @@ The decorator creates one independently reported case per byte, analogous to dat
 | Stress test (10,000 pseudo-random transfers; seed 42) | 1/1 | 2.12 s |
 | **Total** | **265/265** | **11.82 s (sum)** |
 
-The separate performance cell additionally transfers all 256 byte values. The complete recorded notebook run therefore executes 10,519 successful UART transactions (2 handshake + 5 patterns + 256 exhaustive + 10,000 stress + 256 performance). No errors were detected.
+The separate performance cell additionally transfers all 256 byte values. 
+
+The complete recorded notebook run therefore executes 10,519 successful UART transactions (2 handshake + 5 patterns + 256 exhaustive + 10,000 stress + 256 performance). 
+
+No errors were detected.
 
 Actual output excerpt from the saved notebook (text, not a reconstructed screenshot):
 
@@ -276,26 +325,22 @@ PASSED
 | Ideal 8N1 frame duration | 86.81 µs |
 | Ideal UART payload throughput | 11520 bytes/s |
 
-The measured latency includes Python, MMIO, AXI, bridge synchronization, polling and the UART frame. It is not a direct physical baud-rate measurement. The performance loop intentionally excludes per-case pytest reporting overhead; the 9.09 s exhaustive pytest session should not be interpreted as FPGA transfer time. The software serializes transactions without FIFO buffering, which limits aggregate throughput.
+The measured latency includes Python, MMIO, AXI, bridge synchronization, polling and the UART frame. 
+
+It is not a direct physical baud-rate measurement. 
+
+The performance loop intentionally excludes per-case pytest reporting overhead; the 9.09 s exhaustive pytest session should not be interpreted as FPGA transfer time. 
+
+The software serializes transactions without FIFO buffering, which limits aggregate throughput.
 
 ## 12. Validation scope and possible extensions
 
 Completed: RTL design, 52 scenario IDs in GHDL, synthesis, integrated placement/routing, timing closure, programming, MMIO communication, both toggle directions, all byte values, repeated transfers and performance measurement.
 
-Not validated on physical external UART pins: electrical interface, actual baud rate with an instrument, independent clock mismatch, hardware framing-error injection. A Python polling timeout cannot interrupt a blocked AXI access. The driver assumes a single controller and one outstanding transfer. An RTL watchdog, FIFO, interrupt-driven communication, DMA and external serial tests are possible future exercises, not requirements for this internal loopback.
+Not validated on physical external UART pins: electrical interface, actual baud rate with an instrument, independent clock mismatch, hardware framing-error injection. 
 
-## 13. Archive contents and evidence
+A Python polling timeout cannot interrupt a blocked AXI access. 
 
-```text
-exo_10_uart_protocol_documentation/
-├── README.md
-└── assets/
-    ├── uart_tx_simulation.png
-    ├── uart_rx_simulation.png
-    ├── vivado_block_design.png
-    └── vivado_address_map.png
-```
+The driver assumes a single controller and one outstanding transfer. 
 
-The four screenshots are original conversation attachments, selected to document the RTL waveforms and PS/PL integration. Hardware results are reproduced as text from the recorded notebook outputs; no original hardware-test or programming screenshot was available among the selected UART captures. No artificial screenshot has been created. Host virtualization troubleshooting is deliberately excluded. The archive is documentation only; RTL, Vivado files and notebook sources remain in the project repository.
-
-Evidence used: conversation GHDL `make test` log (24 Nov 2026), standalone and integrated Vivado reports (24 Nov 2026, including final routed DRC and methodology reports), original waveform and block-design screenshots, manual MMIO diagnostics, and the saved executed notebook provided as text on 27 Nov 2026.
+An RTL watchdog, FIFO, interrupt-driven communication, DMA and external serial tests are possible future exercises, not requirements for this internal loopback.
